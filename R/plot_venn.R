@@ -79,7 +79,7 @@ plot_venn <- function(
         Venn() %>%
         process_data()
     if (percent) {
-        data@region <- data@region %>%
+        data$regionData <- data$regionData %>%
             mutate(
                 percent = (count * 100 / sum(count)) %>%
                     round(digits = 0) %>%
@@ -90,12 +90,12 @@ plot_venn <- function(
                     paste(count, ., sep = "\n")
             )
     } else {
-        data@region <- mutate(data@region, label = count)
+        data$regionData <- mutate(data$regionData, label = count)
     }
-    data@region$label[data@region$item %>% list.which(length(.) == 0)] <- ""
+    data$regionData$label[data$regionData$item %>% list.which(length(.) == 0)] <- ""
     if (element) {
-        i <- data@region$item %>% list.which(length(.) <= n_max & length(.) > 0)
-        data@region$label[unlist(i)] <- data@region$item %>%
+        i <- data$regionData$item %>% list.which(length(.) <= n_max & length(.) > 0)
+        data$regionData$label[unlist(i)] <- data$regionData$item %>%
             list.search(length(.) <= n_max & length(.) > 0) %>%
             list.mapv(str_pretty(., width_text) %>% paste(., collapse = "\n"))
     }
