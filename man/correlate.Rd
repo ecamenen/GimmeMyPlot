@@ -4,7 +4,13 @@
 \alias{correlate}
 \title{Correlation tables}
 \usage{
-correlate(x, method = "spearman", method_adjust = "BH", cutoff = 0.75)
+correlate(
+  x,
+  y = NULL,
+  method = "spearman",
+  method_adjust = "BH",
+  cutoff = 0.75
+)
 }
 \arguments{
 \item{x}{Data.frame with column and row names.}
@@ -14,7 +20,7 @@ correlate(x, method = "spearman", method_adjust = "BH", cutoff = 0.75)
 \item{method_adjust}{Character for the multiple correction test among
 'BH', 'BY', 'bonferroni', 'fdr', 'hochberg', 'holm', 'hommel', 'none'}
 
-\item{cutoff}{Double to filter correlations}
+\item{cutoff}{Double for the correlation threshold.}
 }
 \value{
 List of data.frames containing correlation and p-value matrices.

@@ -4,7 +4,7 @@
 \alias{palette_continuous}
 \title{Color palette}
 \usage{
-palette_continuous(x)
+palette_continuous(x, gray = TRUE)
 }
 \arguments{
 \item{x}{Integer for the length of the palette}

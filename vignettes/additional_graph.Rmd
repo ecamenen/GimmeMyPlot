@@ -23,7 +23,7 @@ set.seed(0)
 ```
 
 ## Venn diagrams
-```{r venn, fig.width = 5}
+```{r venn, fig.width = 5, eval = FALSE}
 x <- lapply(
     seq(3),
     function(x) {
@@ -208,7 +208,7 @@ plot_network(
 ### Dynamic
 ```{r net_dyn, fig.width = 6, fig.height = 5}
 # Default parameters
-plot_network_dyn(m)
+plot_network_dyn(cor_mat)
 
 # Advanced parameters
 plot_network_dyn(
@@ -217,7 +217,7 @@ plot_network_dyn(
     shape = "square",
     dashed = FALSE,
     edge = e,
-    node = n
+    node = Node(e)
 )
 ```
 

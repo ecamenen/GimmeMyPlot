@@ -51,7 +51,7 @@ plot_histogram <- function(
     }
     if (subtitle) {
         subtitle <- paste0(
-            print_median(df$value, digits = digits),
+            print_dispersion(df$value, digits = digits),
             ", N=",
             length(na.omit(df$value))
         )

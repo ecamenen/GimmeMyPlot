@@ -7,16 +7,27 @@
 plot_bar(
   x = NULL,
   title = NULL,
+  width_text = 30,
   width_title = 20,
-  colour = c("blue", "gray", "#cd5b45"),
+  colour = c("#cd5b45", "gray", "blue"),
   color_title = "black",
+  colour_text = "white",
   cex = 1,
   cex_main = cex * 30,
   digits = 0,
   n_max = 100,
   ratio = 5,
   threshold = 2,
-  hjust_title = 0
+  hjust_title = 0.5,
+  hjust_ratio = 0.25,
+  sample_size = NULL,
+  label_x = "percent",
+  label_y = "none",
+  sort = "asc",
+  error = NULL,
+  abs = FALSE,
+  geom = "bar",
+  nudge_x = 0
 )
 }
 \arguments{
@@ -24,11 +35,15 @@ plot_bar(
 
 \item{title}{Character for the title.}
 
+\item{width_text}{Integer for the maximum length of the subtitle(s).}
+
 \item{width_title}{Integer for the maximum length of the title.}
 
 \item{colour}{Color or vector of colors for the gradient of the bars.}
 
 \item{color_title}{Color for the title.}
+
+\item{colour_text}{Color of the text.}
 
 \item{cex}{Double for the magnification factor for the text relative to the
 default.}
@@ -46,8 +61,7 @@ relative to the default.}
 \item{threshold}{Double for the minimal percentage value before being
 hidden on the plot.}
 
-\item{hjust_title}{Double for the horizontal justification of the title
-(in [0, 1]).}
+\item{hjust_title}{Double for the horizontal justification of the title.}
 }
 \value{
 A ggplot object.

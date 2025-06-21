@@ -1,5 +1,3 @@
-library(ggalluvial)
-
 x <- lapply(seq(3), function(x) {
     runif(100, 1, 3) %>%
         round() %>%

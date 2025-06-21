@@ -9,9 +9,10 @@ plot_venn(
   width_text = 30,
   width_label = 30,
   colour = palette_discrete(),
-  color_gradient = NULL,
+  color_gradient = c("white", "red"),
   cex = 1,
   cex_main = cex * 6,
+  cex_line = cex * 2,
   n_max = 4,
   vjust_label = 0.5,
   ratio = 0.1,
@@ -30,7 +31,7 @@ plot_venn(
 \item{colour}{Color or vector of colors for the violin and boxplot.}
 
 \item{color_gradient}{Vector of colors for the gradient of number of
-elements.}
+elements. If FALSE, hide the color.}
 
 \item{cex}{Double for the magnification factor for the text relative to the
 default.}
@@ -89,12 +90,13 @@ plot_venn(
     color_gradient = c("white", "red"),
     cex = 1.2,
     cex_main = 1.2 * 6,
+    cex_line = 1.5,
     n_max = 2,
     vjust_label = 0.75,
     ratio = 0.5,
     label = FALSE,
     element = FALSE,
-    percent = FALSE
+    percent = FALSE,
 )
 
 }

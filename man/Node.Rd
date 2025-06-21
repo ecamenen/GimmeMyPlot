@@ -4,13 +4,16 @@
 \alias{Node}
 \title{Node (for a network)}
 \usage{
-Node(x, cex = 12)
+Node(x, cex = 12, scale = TRUE)
 }
 \arguments{
 \item{x}{Symmetrical data.frame with column and row names.}
 
 \item{cex}{Double for the magnification factor for the node width relative
 to the default.}
+
+\item{scale}{Boolean to scale the size of the nodes (to divide by the size of
+the biggest node).}
 }
 \value{
 A node object in the form of a data.frame with two columns: id and

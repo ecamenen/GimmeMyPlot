@@ -6,16 +6,21 @@
 \usage{
 plot_mcor(
   x,
+  y = NULL,
   colour = brewer.pal(n = 8, name = "RdBu"),
   cex = 1,
   method = "spearman",
   method_adjust = "BH",
   mat = NULL,
-  p_mat = NULL
+  p_mat = NULL,
+  digits = 2,
+  ...
 )
 }
 \arguments{
 \item{x}{Data.frame of double variables (with column names).}
+
+\item{y}{Data.frame of numerical variables.}
 
 \item{colour}{Color or vector of colors for the gradient of the bars.}
 
@@ -33,6 +38,8 @@ row names).}
 
 \item{p_mat}{Matrix of double for adjusted p-values (with column and row
 names).}
+
+\item{digits}{Integer for the number of decimals.}
 }
 \value{
 NULL (launch a basic plot)
@@ -49,17 +56,30 @@ adjusted p-values are crossed out. This is an wrapper for the function
 library(magrittr)
 library(RColorBrewer)
 
-x <- sapply(seq(20), function(x) runif(20)) \%>\%
+x0 <- runif(20)
+x <- lapply(
+    c(1, -1),
+    function(i) sapply(seq(10), function(j) x0 * i + runif(10, max = 1))
+) \%>\%
+    Reduce(cbind, .) \%>\%
     set_colnames(paste("Variable", seq(20)))
+y <- lapply(
+    c(1, -1),
+    function(i) sapply(seq(10), function(j) x0 * i + runif(10, max = 1))
+) \%>\%
+    Reduce(cbind, .) \%>\%
+    set_colnames(paste("Variable", seq(20))) \%>\%
+    .[, seq(5)]
 
 # Default parameters
 plot_mcor(x)
 
 # Advanced parameters
+plot_mcor(x, y)
 plot_mcor(
     x,
     colour = c("black", brewer.pal(n = 6, name = "RdBu"), 1),
-    method = "spearman",
+    method = "pearson",
     method_adjust = "none",
     cex = 0.8
 )

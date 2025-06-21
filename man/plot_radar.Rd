@@ -6,13 +6,21 @@
 \usage{
 plot_radar(
   x,
+  title = NULL,
+  width_text = 30,
+  width_title = 30,
   colour = palette_discrete(),
   cex = 1,
+  cex_axis = 1.25 * cex,
+  cex_main = 2 * cex,
+  cex_sub = 1.5 * cex,
+  digits = 0,
   n_max = NULL,
   add_percent = FALSE,
-  digits = 0,
   n_interval = 2,
-  alpha = 0.25
+  alpha = 0.25,
+  legend_position = "bottomright",
+  ...
 )
 }
 \arguments{
@@ -20,19 +28,40 @@ plot_radar(
 containing variables in columns and samples in rows (with named columns
 and rows).}
 
+\item{title}{Character for the title.}
+
+\item{width_text}{Integer for the maximum length of the labels.}
+
+\item{width_title}{Integer for the maximum length of the title.}
+
 \item{colour}{Color or vector of colors for the samples.}
 
 \item{cex}{Double for the size of the labels.}
+
+\item{cex_axis}{Double for the magnification factor for the axis labels
+relative to the default.}
+
+\item{cex_main}{Double for the magnification factor for the subtitles
+relative to the default.}
+
+\item{cex_sub}{Double for the magnification factor for the main title
+relative to the default.}
+
+\item{digits}{Integer for the number of digits to be displayed.}
 
 \item{n_max}{Integer for the maximum value of the axis.}
 
 \item{add_percent}{Boolean to include percentage values in the axis labels.}
 
-\item{digits}{Integer for the number of digits to be displayed.}
-
 \item{n_interval}{Integer for the number of intervals for the axis.}
 
-\item{alpha}{Double for the transparency.}
+\item{alpha}{Double for the transparency of the polygons.}
+
+\item{legend_position}{Character for the position of the legend among
+'bottomright', 'bottom', 'bottomleft', 'left', 'topleft', 'top', 'topright',
+'right' and 'center'}
+
+\item{...}{Additional parameters for \code{\link[graphics:legend]{graphics::legend ()}}.}
 }
 \value{
 NULL (launch a basic plot)
@@ -43,7 +72,7 @@ or more quantitative variables represented on axes starting from the same
 point. The relative position and angle of the axes is typically
 uninformative. The radar chart is also known as web chart, spider chart,
 star chart, cobweb chart, irregular polygon, polar chart, or kiviat diagram.
-This is an wrapper for the function \code{\link[fmsb:radarchart]{fmsb::radarchart()}}.
+This is a wrapper for the function \code{\link[fmsb:radarchart]{fmsb::radarchart()}}.
 }
 \examples{
 library(magrittr)
@@ -67,7 +96,9 @@ plot_radar(
     n_max = 100,
     digits = 1,
     n_interval = 4,
-    alpha = 0.5
+    alpha = 0,
+    legend_position = 1.5,
+    y = -0.7
 )
 
 }

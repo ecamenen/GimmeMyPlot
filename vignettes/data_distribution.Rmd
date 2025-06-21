@@ -167,7 +167,7 @@ housetasks <- read.delim(file_path, row.names = 1)
 sub_housetasks <- housetasks[c(1:2, 12:13), c("Wife", "Husband")]
 plot_bar_2cat(
     t(sub_housetasks),
-    colour = palette_discrete()[3:4],
+    colour = c("#4DAF4A", "#984EA3"),
     sort = TRUE,
     threshold = 10,
     count = TRUE,

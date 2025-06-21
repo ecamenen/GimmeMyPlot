@@ -13,15 +13,20 @@ plot_pie(
   digits = 0.1,
   cex = 15,
   cex_main = cex * 1.5,
-  hsize = 1.2,
+  cex_label = cex * 1.25,
+  sort = TRUE,
+  threshold = 5,
+  hsize = 1.5,
   legend = TRUE,
+  label = FALSE,
+  percent = TRUE,
   sample_size = NULL,
   collapse = FALSE,
-  threshold = 5,
   t = -0.5,
   l = -1,
   r = -1,
-  b = -1
+  b = -1,
+  angle = 0
 )
 }
 \arguments{
@@ -43,20 +48,32 @@ default.}
 \item{cex_main}{Double for the magnification factor for the subtitles
 relative to the default.}
 
+\item{cex_label}{Integer for the maximum length of the title.}
+
+\item{sort}{Boolean to order the categories by value. If set to false,
+the categories are ranked by their names. Alternatively, it could be
+a character vector of the same length as the number of categories,
+allowing for renaming.}
+
+\item{threshold}{Double for the minimal percentage value before being
+hidden on the plot.}
+
 \item{hsize}{Double for the size of the central hole in the pie chart
 (in [1, 2]).}
 
-\item{legend}{Boolean to toggle the display of the legend.}
+\item{legend}{Boolean to toggle the display of the legend or a vector of
+character to rename the legend.}
+
+\item{label}{Boolean to toggle the display of the label.}
 
 \item{sample_size}{Integer for the sample size of the dataset to calculate
 percentages (if different from the length of the variable).}
 
 \item{collapse}{Boolean to merge categories with identical proportions.}
 
-\item{threshold}{Double for the minimal percentage value before being
-hidden on the plot.}
-
 \item{t, r, b, l}{Dimensions of each margin. (To remember order, think trouble).}
+
+\item{angle}{Angle (in \eqn{[0, 360]})}
 }
 \value{
 A ggplot object.
@@ -73,6 +90,21 @@ x <- c(rep("A", 5), rep("B", 4))
 plot_pie(x)
 
 # Advanced parameters
+plot_pie(
+    x,
+    label = TRUE,
+    legend = FALSE,
+    sort = FALSE,
+    percent = FALSE
+)
+plot_pie(
+    x,
+    sort = c("A", "B"),
+    legend = paste("Level", seq(2)),
+    sample_size = 11,
+    threshold = 20
+)
+
 k <- 10
 n <- runif(k, 1, 10) \%>\% round()
 x <- paste("Level", seq(k)) \%>\%
@@ -90,5 +122,4 @@ plot_pie(
     collapse = TRUE,
     b = 3
 )
-
 }

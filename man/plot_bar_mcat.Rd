@@ -10,18 +10,20 @@ plot_bar_mcat(
   title = NULL,
   width_text = 20,
   width_title = width_text,
-  colour = c("blue", "gray", "#cd5b45"),
+  colour_gradient = c("blue", "gray", "#cd5b45"),
+  colour_text = "white",
   color_title = "black",
   cex = 10,
   digits = 0,
+  threshold = 2,
   collapse = FALSE,
   ratio = 5,
   n_collapse = 5,
   n_max = Inf,
-  threshold = 1,
   hjust_title = -0.5,
   hjust_text = -0.1,
-  vjust_text = 0.5
+  vjust_text = 0.5,
+  inverse = FALSE
 )
 }
 \arguments{
@@ -32,11 +34,13 @@ percentages (if different from the length of the variable).}
 
 \item{title}{Character for the title.}
 
-\item{width_text}{Integer for the maximum length of the subtitle(s).}
+\item{width_text}{Integer for the maximum length of the text.}
 
 \item{width_title}{Integer for the maximum length of the title.}
 
-\item{colour}{Color or vector of colors for the violin and boxplot.}
+\item{colour_gradient}{Color or vector of colors for the categories.}
+
+\item{colour_text}{Color of the text.}
 
 \item{color_title}{Color for the title.}
 
@@ -44,6 +48,9 @@ percentages (if different from the length of the variable).}
 default.}
 
 \item{digits}{Integer for the number of decimals.}
+
+\item{threshold}{Double for the minimal percentage value before being
+hidden on the plot.}
 
 \item{collapse}{Boolean to merge categories with identical proportions.}
 
@@ -54,17 +61,11 @@ default.}
 \item{n_max}{Integer for the maximum number of bars to show
 (prioritizing those with the largest value).}
 
-\item{threshold}{Double for the minimal percentage value before being
-hidden on the plot.}
+\item{hjust_title}{Double for the horizontal justification of the title.}
 
-\item{hjust_title}{Double for the horizontal justification of the title
-(in [0, 1]).}
+\item{hjust_text}{Double for the horizontal justification of the text.}
 
-\item{hjust_text}{Double for the horizontal justification of the text
-(in [0, 1]).}
-
-\item{vjust_text}{Double for the vertical justification of the text
-(in [0, 1]).}
+\item{vjust_text}{Double for the vertical justification of the text.}
 }
 \value{
 A ggplot object.
@@ -89,7 +90,7 @@ plot_bar_mcat(
     title = "Some categorical variable",
     width_text = 30,
     width_title = 50,
-    colour = brewer.pal(9, "Reds"),
+    colour_gradient = brewer.pal(9, "Reds"),
     color_title = "red",
     cex = 8,
     digits = 1,

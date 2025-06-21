@@ -6,29 +6,46 @@
 \usage{
 plot_violin(
   x,
-  method = "anova",
+  method = "kruskal",
   method_adjust = "BH",
   title = NULL,
   width_text = 20,
   width_title = 20,
+  width_label = 10,
   colour = "red",
   color_title = colour,
-  pch_alpha = 1,
-  pch_colour = "gray50",
+  color_subtitle = "black",
+  pch_alpha = 0.5,
   pch_size = cex,
   cex = 1,
   cex_axis = 17 * cex,
   cex_main = 21 * cex,
   cex_sub = 15 * cex,
-  stats = TRUE,
+  test = TRUE,
   digits = 0,
   alpha = 0.3,
   coef = 1.5,
-  hjust = 0.5,
+  hjust = 1,
   lwd = 1,
   probs = c(0.25, 0.75),
   subtitle = FALSE,
-  ylab = NULL
+  ylab = NULL,
+  ratio = 7,
+  ratio_labs = 7,
+  display_log = FALSE,
+  log_power = 10,
+  label = FALSE,
+  breaks = NULL,
+  group_ref = NULL,
+  label_post_hoc = "p.adj.signif",
+  violin = TRUE,
+  alpha_error = alpha,
+  stats = TRUE,
+  max.overlaps = 10,
+  force = 1,
+  func_label = format_labels,
+  paired = FALSE,
+  ...
 )
 }
 \arguments{
@@ -53,8 +70,6 @@ plot_violin(
 \item{pch_alpha}{Double for the transparency of the points (ranging from 0
 to 1 for maximum opacity).}
 
-\item{pch_colour}{Color for the sina points.}
-
 \item{pch_size}{Double for the magnification factor for the points relative
 to the default.}
 
@@ -70,7 +85,7 @@ relative to the default.}
 \item{cex_sub}{Double for the magnification factor for the main title
 relative to the default.}
 
-\item{stats}{Boolean to display the results of statistical tests.}
+\item{test}{Boolean to display the results of statistical tests.}
 
 \item{digits}{Integer for the number of decimals.}
 
@@ -88,6 +103,8 @@ to 1 for maximum opacity).}
 \item{subtitle}{Boolean to display the subtitle.}
 
 \item{ylab}{Character for the title of the Y-axis.}
+
+\item{pch_colour}{Color for the sina points.}
 }
 \value{
 A ggplot object.

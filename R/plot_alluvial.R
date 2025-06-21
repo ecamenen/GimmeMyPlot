@@ -47,6 +47,7 @@ plot_alluvial <- function(
     colnames(x) <- colnames(x) %>%
         str_wrap(width_label) %>%
         to_title()
+    x <- as.data.frame(x)
     df <- sapply(x, function(x) as.character(x)) %>% as.data.frame()
     n <- unlist(df) %>%
         unique() %>%

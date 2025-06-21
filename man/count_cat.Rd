@@ -4,7 +4,7 @@
 \alias{count_cat}
 \title{Frequency of categorical variable}
 \usage{
-count_cat(x, width = 20, collapse = FALSE)
+count_cat(x, width = 20, collapse = FALSE, sort = TRUE, format = TRUE)
 }
 \arguments{
 \item{x}{Vector or data.frame of categorical variables.}
@@ -12,6 +12,14 @@ count_cat(x, width = 20, collapse = FALSE)
 \item{width}{Maximum width of string.}
 
 \item{collapse}{Boolean to merge categories with identical proportions.}
+
+\item{sort}{Boolean to order the categories by value. If set to false,
+the categories are ranked by their names. Alternatively, it could be
+a character vector of the same length as the number of categories,
+allowing for renaming.}
+
+\item{format}{Boolean to format the names of the categories if the input is
+a vector.}
 }
 \value{
 Data.frame with two columns (f and n).

@@ -6,22 +6,28 @@
 \usage{
 plot_network_dyn(
   x = NULL,
-  title = "",
+  title = NULL,
+  color = c("#eee685", "#686868"),
   cex = 1,
   cex_main = 14 * cex,
   cex_node = 3 * cex,
   cex_edge = 2 * cex,
-  color = c("#eee685", "#686868"),
   shape = "dot",
   dashed = TRUE,
   node = NULL,
-  edge = NULL
+  edge = NULL,
+  label = FALSE,
+  digits = 2,
+  ...
 )
 }
 \arguments{
 \item{x}{Vector or data.frame of numerical values visualized on the plot.}
 
 \item{title}{Character for the title.}
+
+\item{color}{Color vector of length 2 corresponding respectively to
+background and node label.}
 
 \item{cex}{Double for the magnification factor for the text relative to the
 default.}
@@ -35,9 +41,6 @@ relative to the default.}
 \item{cex_edge}{Double for the magnification factor for the edge width
 relative to the default.}
 
-\item{color}{Color vector of length 2 corresponding respectively to
-background and node label.}
-
 \item{shape}{Character for node shape (among: 'circle', 'square' or 'none').}
 
 \item{dashed}{Boolean for dashed edges.}
@@ -45,6 +48,12 @@ background and node label.}
 \item{node}{Node object.}
 
 \item{edge}{Edge object.}
+
+\item{label}{Boolean for edge text display.}
+
+\item{digits}{Integer for the number of decimals.}
+
+\item{...}{Additional parameters in \link[visNetwork:visNodes]{visNetwork::visNodes}.}
 }
 \value{
 visNetwork object

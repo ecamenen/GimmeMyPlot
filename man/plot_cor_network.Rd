@@ -5,19 +5,25 @@
 \title{Correlation network}
 \usage{
 plot_cor_network(
-  x,
+  x = NULL,
+  width_text = 30,
   colour_edge = c("#4DAF4A", "#EE6363"),
   colour_node = c("white", "#3D3D3D"),
   cex = 1,
+  cex_node = cex * 12,
   method = "spearman",
   method_adjust = "BH",
+  is_cor = FALSE,
   cutoff = 0.75,
   digits = 2,
+  dyn = TRUE,
   ...
 )
 }
 \arguments{
 \item{x}{Data.frame with column and row names.}
+
+\item{width_text}{Integer for the maximum length of the text.}
 
 \item{colour_edge}{Color vector of length 2 corresponding respectively to
 a positive or negative correlation.}
@@ -28,16 +34,22 @@ background and node label.}
 \item{cex}{Double for the magnification factor for the text relative to the
 default.}
 
+\item{cex_node}{Double for the magnification factor for the node width
+relative to the default.}
+
 \item{method}{Character for the test method ('pearson' or 'spearman').}
 
 \item{method_adjust}{Character for the multiple correction test among
 'BH', 'BY', 'bonferroni', 'fdr', 'hochberg', 'holm', 'hommel', 'none'}
 
-\item{cutoff}{Double to filter correlations}
+\item{is_cor}{Boolean to determine if x is a already a correlation object
+or not.}
+
+\item{cutoff}{Double for the correlation threshold.}
 
 \item{digits}{Integer for the number of decimals.}
 
-\item{...}{Additional parameters in \link{plot_network_dyn}.}
+\item{...}{Additional parameters in \link[visNetwork:visNodes]{visNetwork::visNodes}.}
 }
 \value{
 visNetwork object
@@ -69,6 +81,18 @@ plot_cor_network(
     method = "pearson",
     method_adjust = "none",
     cutoff = 0.7,
+    digits = 1
+)
+cor_obj <- correlate(x)
+plot_cor_network(
+    cor_obj,
+    colour_edge = c(
+        brewer.pal(3, "Pastel1")[3],
+        brewer.pal(3, "Pastel1")[1]
+    ),
+    colour_node = c("white", "black"),
+    cex = 1.5,
+    is_cor = TRUE,
     digits = 1
 )
 }

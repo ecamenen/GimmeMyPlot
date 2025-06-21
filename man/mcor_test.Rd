@@ -4,12 +4,23 @@
 \alias{mcor_test}
 \title{Multiple correlation}
 \usage{
-mcor_test(x, pval = FALSE, method = "spearman", method_adjust = "BH")
+mcor_test(
+  x,
+  y = NULL,
+  estimate = TRUE,
+  p.value = FALSE,
+  method = "spearman",
+  method_adjust = "BH"
+)
 }
 \arguments{
 \item{x}{Data.frame of numerical variables.}
 
-\item{pval}{Boolean to return adjusted p-values rather than coefficients.}
+\item{y}{Data.frame of numerical variables.}
+
+\item{estimate}{Boolean to return the estimated measure of association.}
+
+\item{p.value}{Boolean to return adjusted p-values.}
 
 \item{method}{Character for the test method ('pearson', 'kendall', or
 spearman').}
@@ -22,18 +33,33 @@ Data.frame symmetrical containing correlation test results
 (coefficients and adjusted p-value) for each pair of variables.
 }
 \description{
-Tests correlation between several variables. This is an wrapper for the
-function \code{\link[stats:cor.test]{stats::cor.test()}}.
+Tests correlation between several variables. If y is null, calculate the
+correlation between each variable in x; otherwise, calculate the correlation
+between each variable in x and each variable in y. This is an wrapper for
+the function \code{\link[stats:cor.test]{stats::cor.test()}}.
 }
 \examples{
 library(magrittr)
-x <- runif(20)
+x0 <- runif(20)
 x <- lapply(
     c(1, -1),
-    function(i) sapply(seq(10), function(j) x * i + runif(10, max = 1))
+    function(i) sapply(seq(10), function(j) x0 * i + runif(10, max = 1))
 ) \%>\%
     Reduce(cbind, .) \%>\%
     set_colnames(paste("Variable", seq(20)))
+y <- lapply(
+    c(1, -1),
+    function(i) sapply(seq(10), function(j) x0 * i + runif(10, max = 1))
+) \%>\%
+    Reduce(cbind, .) \%>\%
+    set_colnames(paste("Variable", seq(20))) \%>\%
+    .[, seq(5)]
 mcor_test(x)
-mcor_test(x, pval = TRUE, method = "pearson", method_adjust = "bonferroni")
+mcor_test(
+    x,
+    y,
+    p.value = TRUE,
+    method = "pearson",
+    method_adjust = "bonferroni"
+)
 }
