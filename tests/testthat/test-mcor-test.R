@@ -13,7 +13,7 @@ y <- lapply(
     set_colnames(paste("Variable", seq(20))) %>%
     .[, seq(5)]
 
-test_that("mcor multiplication default works", {
+test_that("mcor default works", {
     res <- mcor_test(x)
     expect_equal(dim(res), c(20, 20))
 })
