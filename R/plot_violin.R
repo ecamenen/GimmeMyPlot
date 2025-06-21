@@ -28,7 +28,7 @@
 #' relative to the default.
 #' @param cex_sub Double for the magnification factor for the main title
 #' relative to the default.
-#' @param stats Boolean to display the results of statistical tests.
+#' @param test Boolean to display the results of statistical tests.
 #' @param digits Integer for the number of decimals.
 #' @param coef Double to multiply the quantiles by.
 #' @param hjust Double for the horizontal justification (in \[0, 1\]).
@@ -79,14 +79,15 @@ plot_violin <- function(
         width_label = 10,
         colour = "red",
         color_title = colour,
-        pch_alpha = 1,
-        pch_colour = "gray50",
+        color_subtitle = "black",
+        pch_alpha = 0.5,
+        # pch_colour = "black",
         pch_size = cex,
         cex = 1,
         cex_axis = 17 * cex,
         cex_main = 21 * cex,
         cex_sub = 15 * cex,
-        stats = TRUE,
+        test = TRUE,
         digits = 0,
         alpha = 0.3,
         coef = 1.5,
@@ -100,13 +101,23 @@ plot_violin <- function(
         display_log = FALSE,
         log_power = 10,
         label = FALSE,
-        breaks = c(0, 5, 15, 30, 60, 100),
+        breaks = NULL,
         group_ref = NULL,
         label_post_hoc = "p.adj.signif",
+        violin = TRUE,
+        alpha_error = alpha,
         # group_ref = "none",
+        stats = TRUE,
+        max.overlaps = 10,
+        force = 1,
+        func_label = format_labels,
         ...) {
     if (is.null(title)) {
-        title <- paste0(deparse(substitute(x)))
+        if (is.data.frame(x) && length(colnames(x)) == 1) {
+            title <- colnames(x)
+        } else {
+            title <- paste0(deparse(substitute(x)))
+        }
     }
     value <- 1
     if (isFALSE(subtitle)) {
@@ -117,7 +128,7 @@ plot_violin <- function(
                 length(na.omit(unlist(x)))
             )
         } else {
-            if (stats) {
+            if (test) {
                 tmp <- as.data.frame(x) %>%
                     pivot_longer(everything()) %>%
                     filter(!is.na(value))
@@ -144,7 +155,6 @@ plot_violin <- function(
             }
         }
     }
-    color_subtitle <- colour
     if (!(class(x) %in% c("data.frame", "tibble")) || ncol(x) == 1) {
         df <- data.frame(value = x, name = 1)
         colnames(df)[1] <- "value"
@@ -160,17 +170,25 @@ plot_violin <- function(
             colour <- rep(colour, ncol(x))
         colour_fill <- colour
         colour <- factor(df$name, labels = colour)
-        sub_labs <- group_by(df, name) %>%
-            reframe(
-                label = paste0(
-                    # "\n",
-                    print_median(value, digits = digits, width_label)#,
-                    # ",\nN=",
-                    # length(na.omit(value))
-                )
-            ) %>%
-            mutate(label = paste0(name, label)) %>% #str_wrap(width_label)) %>%
-            pull(label)
+        if (stats) {
+            sub_labs <- group_by(df, name) %>%
+                reframe(
+                    label = ifelse(
+                        stats,
+                        paste0(
+                            "\n",
+                            print_median(value, digits = digits, width_label),
+                            ",\nN=",
+                            length(na.omit(value))
+                        ),
+                        ""
+                    )
+                ) %>%
+                mutate(label = paste0(name, label)) %>% #str_wrap(width_label)) %>%
+                pull(label)
+        } else {
+            sub_labs <- pull(df, name)
+        }
         guide <- TRUE
     }
     colour_fill1 <- factor(df$name, labels = colour_fill)
@@ -208,24 +226,52 @@ plot_violin <- function(
             as.character() %>%
             as.numeric()
     }
+
     p <- ggplot(df, aes(x = name, y = as.numeric(value))) +
+        # geom_violin(
+        #     alpha = 0,
+        #     aes(fill = colour_fill0),
+        #     # colour = NA,
+        #     draw_quantiles = c(0.5),
+        #     linewidth = 1
+        # ) +
+        geom_boxplot(
+            coef = 0,
+            outlier.shape = NA,
+            colour = NA,
+            aes(fill = colour_fill0),
+            linewidth = 1,
+            alpha = alpha,
+            na.rm = TRUE,
+            # width = 0.25,
+        ) +
+        stat_summary(
+            fun = median,
+            geom = "crossbar",
+            width = 0.75,
+            aes(ymin = ..y.., ymax = ..y.., colour = colour_fill0),
+            size = 0.5
+        ) +
         geom_errorbar(
-            width = .1,
-            lwd = lwd,
-            colour = colour_fill1,
+            width = .5,
+            lwd = 1,
+            na.rm = TRUE,
+            colour = colour_fill0,
+            alpha = alpha_error / 10,
             aes(
                 ymin = get_iqr(1),
                 ymax = get_iqr(0)
             )
-        ) +
-        geom_boxplot(
-            coef = 0,
-            outlier.shape = NA,
-            colour = "white",
-            aes(fill = colour_fill0),
-            lwd = lwd * 0.25
-        ) +
-        geom_violin(alpha = alpha, aes(fill = colour_fill0), colour = NA) +
+        )
+    if (violin)
+        p <- p + geom_violin(
+            aes(colour = colour_fill0),
+            fill = NA,
+            # draw_quantiles = c(0.25, 0.75),
+            linewidth = 1,
+            na.rm = TRUE
+        )
+    p <- p +
         theme_minimal() +
         labs(
             title = str_wrap(title, width_title),
@@ -233,27 +279,55 @@ plot_violin <- function(
             y = ylab
         ) +
         scale_fill_manual(values = unique(colour_fill)) +
+        scale_color_manual(values = unique(colour_fill)) +
         scale_x_discrete(limits = colnames(x), labels = sub_labs) +
-        scale_y_continuous(breaks = pretty_breaks(n = 3))
+        scale_y_continuous(breaks = if(is.null(breaks)) pretty_breaks(n = 3) else breaks, labels = func_label)
     if (display_log) {
-        log_func <- get(paste0("log", log_power))
-        if(as.numeric(log_power) == 10) {
-            breaks = max(unlist(x), na.rm = TRUE) %>%
-                log_func() %>%
-                ceiling() %>%
-                seq(0, .) %>%
-                `^`(log_power, .) %>%
-                # paste0("1e", .) %>%
-                as.numeric() %>%
-                c(0, .)
+        min_x <- min(unlist(x), na.rm = TRUE)
+        if (min_x == 0) {
+            add <- 0.1
+        } else {
+            add <- 0
         }
+        if (log_power > 1) {
+            log_func <- function(x) log(x + add, base = log_power)
+            comp_func <- function(x) `^`(log_power, x) - add
+        } else {
+            log_func <- function(x) log(x + add)
+            comp_func <- function(x) exp(x) - add
+        }
+        # if (log_power == 10 && min_x < 1e-1) {
+        #     label_func <- scientific_format
+        # } else {
+        #     label_func <- number_format
+        # }
+        if (is.null(breaks)) {
+            breaks <- c(min_x, max(unlist(x), na.rm = TRUE)) %>%
+                log_func() %>%
+                ceiling()
+            breaks <- seq(breaks[1], breaks[2]) %>%
+                comp_func() %>%
+                round_multiple_digits()
+        }
+        # breaks <- c(min(unlist(x), na.rm = TRUE), max(unlist(x), na.rm = TRUE)) %>%
+        #     log_func() %>%
+        #     ceiling()
+        # comp_func() %>%
+        #     as.numeric() %>%
+        #     c(0, .)
         p <- p + scale_y_continuous(
-            trans = get(paste0("log", log_power, "x_trans")),
-            breaks = breaks
+            trans = trans_new(
+                "logxn",
+                function(x) log_func(x),
+                function(x) comp_func(x)
+            ),
+            breaks = breaks,
+            labels = func_label(breaks)
         )
     }
-    if ((class(x) %in% c("data.frame", "tibble")) && ncol(x) > 2 && stats) {
-        post_hoc0 <- dunn_test(
+    if ((class(x) %in% c("data.frame", "tibble")) && ncol(x) > 2 && test) {
+        func_posthoc <- ifelse(method == "kruskal", dunn_test, tukey_hsd)
+        post_hoc0 <- func_posthoc(
             df,
             value ~ name,
             p.adjust.method = method_adjust
@@ -262,7 +336,10 @@ plot_violin <- function(
             post_hoc0 <- post_hoc0 %>%
                 filter(str_detect(group1, group_ref) | str_detect(group2, group_ref))
         }
-        post_hoc <- add_significance(post_hoc0, "p") %>%
+        if (method == "kruskal") {
+            post_hoc0 <- add_significance(post_hoc0, "p")
+        }
+        post_hoc <- post_hoc0 %>%
             filter(p.adj <= 0.05) %>%
             mutate(
                 p.adj.signif = str_replace_all(
@@ -278,7 +355,7 @@ plot_violin <- function(
         if (display_log) {
             post_hoc <- mutate(
                 post_hoc,
-                y.position = log_func(y.position)
+                y.position = log_func(y.position) + 0.1
             )
         }
         # col_post <- (str_detect(post_hoc$group1, paste0(group_ref, ": ")) |
@@ -290,8 +367,8 @@ plot_violin <- function(
             stat_pvalue_manual(
                 post_hoc,
                 label = label_post_hoc,
-                color = "gray50", # col_post,
-                bracket.size = lwd,
+                color = "black", # col_post,
+                bracket.size = 1,
                 size = cex * 6,
                 hide.ns = TRUE,
                 tip.length = 0
@@ -300,11 +377,12 @@ plot_violin <- function(
     p <- p +
         geom_sina(
             size = pch_size,
-            colour = pch_colour,
+            aes(colour = colour_fill0),
             alpha = pch_alpha,
-            seed = 1
+            seed = 1,
+            # ...
         )
-    if ((class(x) %in% c("data.frame", "tibble")) && label && !is.null(rownames(x))) {
+    if ((any(class(x) %in% c("data.frame", "tibble"))) && label && !is.null(rownames(x))) {
         tmp <- list.map(
             x,
             f(i, j) ~{
@@ -329,8 +407,10 @@ plot_violin <- function(
                 x = unique(name) %>% rep(each = nrow(x)),
                 y = unlist(x) %>% as.numeric()
             ),
+            max.overlaps = max.overlaps,
             size = cex * 5,
-            colour = "gray40"
+            colour = "gray40",
+            force = force
         )
     }
     theme_violin(
@@ -342,7 +422,9 @@ plot_violin <- function(
         guide = guide,
         color_title = color_title,
         hjust = hjust,
-        color_subtitle = color_subtitle
+        color_subtitle = color_subtitle,
+        lwd = lwd,
+        grid = TRUE
     ) %>% suppressWarnings() +
         theme(
             plot.margin = margin(l = 0 + margin_spacer(sub_labs, ratio_labs)),
@@ -361,6 +443,13 @@ log2x_trans <- trans_new(
     "log2x",
     function(x) ifelse(x != 0, log2(x), 0),
     function(x) ifelse(x != 0, 2^(x), 0),
+    breaks = breaks_extended(6),
+    format = label_number_auto()
+)
+log1x_trans <- trans_new(
+    "log1x",
+    function(x) ifelse(x != 0, log(x), 0),
+    function(x) ifelse(x != 0, exp(x), 0),
     breaks = breaks_extended(6),
     format = label_number_auto()
 )
