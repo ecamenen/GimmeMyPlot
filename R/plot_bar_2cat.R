@@ -3,11 +3,9 @@
 #' Visualize the distribution of two categorical variables using a stacked
 #' barplot.
 #'
+#' @inherit post_hoc_chi2
 #' @inherit plot_violin
 #' @inherit plot_bar_mcat
-#' @param method Character indicating the type of test to be performed,
-#' choosing between "chisq" for the chi-square test or "fisher" for
-#' Fisher's exact test.
 #' @param width_text Integer for the maximum length of the text.
 #' @param width_legend Integer for the maximum length of the legend.
 #' @param ratio Double for scaling the Y-axis.
@@ -21,7 +19,7 @@
 #'   mapply(function(x, y) rep(x, y), LETTERS[seq(3)], c(6, 6, 8)) %>% unlist()
 #' )
 #' plot_bar_2cat(x)
-#' plot_bar_2cat(x, legend = c("c", "b", "a"))
+#' plot_bar_2cat(x, legend = c("c", "b", "a"), colour = brewer.pal(3, "Reds"))
 #'
 #' # Advanced parameters
 #' file_path <- "http://www.sthda.com/sthda/RDoc/data/housetasks.txt"
@@ -29,7 +27,7 @@
 #' sub_housetasks <- housetasks[c(1:2, 12:13), c("Wife", "Husband")]
 #' plot_bar_2cat(
 #'     t(sub_housetasks),
-#'     colour = palette_discrete()[3:4],
+#'     colour = c("#4DAF4A", "#984EA3"),
 #'     sort = TRUE,
 #'     threshold = 10,
 #'     count = TRUE,
@@ -54,13 +52,16 @@ plot_bar_2cat <- function(
         method_adjust = "BH",
         sort = TRUE,
         threshold = 0,
+        threshold_pct = 0,
         ratio = 7,
         stats = TRUE,
         legend = NULL,
         count = FALSE,
+        pct = TRUE,
+        digits = 1,
         ...
 ) {
-    x <- as.data.frame(x)
+    x <- as.data.frame(x) -> x0
     if (count) {
         tmp <- x %>%
             mutate(Category = rownames(.)) %>%
@@ -68,7 +69,9 @@ plot_bar_2cat <- function(
         x <- lapply(
             seq(nrow(tmp)),
             function(x) {
-                slice(tmp, x) %>%
+                xx <- slice(tmp, x)
+                if(pull(xx, 3) > 0)
+                    xx %>%
                     data.frame(pull(., 3) %>% seq()) %>%
                     select(1, 2)
             }
@@ -79,8 +82,10 @@ plot_bar_2cat <- function(
     df0$var2 <- str_wrap(df0$var2, width =  width_text)
     if (isFALSE(sort)) {
         df0$var2 <- df0$var2 %>% factor(levels = unique(.))
-    } else {
+    } else if (isTRUE(sort)) {
         df0$var2 <- factor(df0$var2)
+    } else {
+        df0$var2 <- df0$var2 %>% factor(levels = sort)
     }
     df0$var1 <- str_wrap(df0$var1, width =  width_text)
     if (is.null(legend)) {
@@ -94,7 +99,16 @@ plot_bar_2cat <- function(
         colour <- palette_discrete()[seq(unique(pull(x, 1)))]
     }
     counts <- data.frame(table(df0, useNA = "ifany")) %>%
-        mutate(label = ifelse(Freq > threshold, Freq, ""))
+        mutate(label = ifelse(Freq > threshold, Freq, "")) %>%
+        group_by(var2) %>%
+        mutate(label_pct = round(100 * Freq / sum(Freq), digits)) %>%
+        ungroup() %>%
+        mutate(
+            label_pct = ifelse(
+                Freq > threshold,
+                ifelse(label_pct > threshold_pct, paste0(label, "\n(", label_pct, "%)"), label),
+                "")
+            )
 
     max_val <- group_by(df0, var2) %>%
         summarise(label = length(var2)) %>%
@@ -102,12 +116,13 @@ plot_bar_2cat <- function(
         max(na.rm = TRUE)
     if (stats) {
         res <- post_hoc_chi2(
-            x,
+            x0,
             method = method,
             method_adjust = method_adjust,
+            count = count,
             ...
         ) %>%
-            filter(p <= 0.05) %>%
+            filter(FDR <= 0.05) %>%
             mutate(
                 var1 = df0$var1[1],
                 y.position = max_val +
@@ -124,7 +139,7 @@ plot_bar_2cat <- function(
             na.value = "gray"
         ) +
         geom_text(
-            aes(label = label, y = Freq),
+            aes(label = if(pct) label_pct else label, y = Freq),
             position = position_stack(vjust = 0.5),
             colour = I(colour_text),
             size = cex * 6
@@ -134,8 +149,8 @@ plot_bar_2cat <- function(
           labels = group_by(df0, var2) %>%
             summarise(label = length(var2)) %>%
             mutate(
-                label = str_wrap(var2, width_legend) %>%
-                    paste0("\n(N = ", label, ")")) %>%
+                label = str_wrap(var2, width_legend)) %>%
+                    # paste0("\n(N = ", label, ")")) %>%
                     pull(label)
 
         )
@@ -153,7 +168,7 @@ plot_bar_2cat <- function(
     if (stats && nrow(res) > 0) {
         p <- p + stat_pvalue_manual(
             res,
-            label = "p.signif",
+            label = "fdr.signif",
             color = "gray50",
             bracket.size = 0.7,
             size = cex * 6,
