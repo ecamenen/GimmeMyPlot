@@ -62,6 +62,8 @@ plot_mcor <- function(
     method_adjust = "BH",
     mat = NULL,
     p_mat = NULL,
+    digits = 2,
+    # TODO: is_cor
     ...) {
     if (is.null(mat) && is.null(p_mat)) {
         res <- mcor_test(
@@ -99,15 +101,16 @@ plot_mcor <- function(
         tl.cex = 1 * cex,
         p.mat = p_mat,
         sig.level = 0.05,
-        addgrid.col = NA,
-        insig = "pch",
+        # addgrid.col = NA,
         pch = 4,
         pch.cex = 2.5 * cex,
-        pch.col = "white",
+        # pch.col = "white",
         diag = !is.null(y),
         na.label = " ",
         cl.cex = cex * 0.95,
         cl.align.text = "l",
+        insig = "blank",
+        number.digits = digits,
         ...
     )
 }
