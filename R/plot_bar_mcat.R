@@ -3,22 +3,19 @@
 #' Visualize the proportions of multiple categorical variables using a
 #' barplot
 #'
-#' @inheritParams plot_violin
 #' @inheritParams plot_pie
+#' @inheritParams plot_violin
+#' @inheritParams plot_bar
 #' @param x Data.frame of character values visualized on the plot.
-#' @param width_text Integer for the maximum length of the text.
 #' @param colour_gradient Color or vector of colors for the categories.
 #' @param colour_text Color of the text.
 #' @param ratio Double for the width scale.
 #' @param n_collapse Integer for the maximum number of merged categories to show
 #' @param n_max Integer for the maximum number of bars to show
 #' (prioritizing those with the largest value).
-#' @param hjust_title Double for the horizontal justification of the title
-#' (in \[0, 1\]).
-#' @param hjust_text Double for the horizontal justification of the text
-#' (in \[0, 1\]).
-#' @param vjust_text Double for the vertical justification of the text
-#' (in \[0, 1\]).
+#' @param hjust_title Double for the horizontal justification of the title.
+#' @param hjust_text Double for the horizontal justification of the text.
+#' @param vjust_text Double for the vertical justification of the text.
 #'
 #' @examples
 #' library(magrittr)
@@ -60,15 +57,18 @@ plot_bar_mcat <- function(
     color_title = "black",
     cex = 10,
     digits = 0,
+    threshold = 2,
     collapse = FALSE,
     ratio = 5,
     n_collapse = 5,
     n_max = Inf,
-    threshold = 2,
     hjust_title = -0.5,
     hjust_text = -0.1,
     vjust_text = 0.5,
-    inverse = FALSE) {
+    inverse = FALSE
+    # label_x = "percent",
+    # label_y = "none"
+    ) {
     if (is.null(title)) {
         title <- deparse(substitute(x))
     }
@@ -76,7 +76,8 @@ plot_bar_mcat <- function(
     df <- count_cat(
         x0,
         width = width_text,
-        collapse = collapse
+        collapse = collapse,
+        format = FALSE
     )
     if (is.null(sample_size)) {
         sample_size <- nrow(x0)
