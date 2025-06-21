@@ -2,6 +2,7 @@
 #'
 #' This is an wrapper for the function [RColorBrewer::brewer.pal()].
 #' @return Color vector
+#' @export
 palette_discrete <- function() {
     c(
         brewer.pal(9, "Set1")[-c(6:7, 9)],
@@ -15,19 +16,44 @@ palette_discrete <- function() {
 #' This is an wrapper for the function [RColorBrewer::brewer.pal()].
 #' @param x Integer for the length of the palette
 #' @return Color vector
-palette_continuous <- function(x) {
-    colorRampPalette(
-        c(
-            brewer.pal(9, "YlOrBr")[c(3, 5, 7)],
-            brewer.pal(9, "RdBu")[seq(4)],
-            brewer.pal(11, "PiYG")[4:1],
-            brewer.pal(11, "PRGn")[seq(4)],
-            brewer.pal(11, "RdYlBu")[7:11],
-            brewer.pal(11, "BrBG")[10:8],
-            brewer.pal(11, "PiYG")[7:11],
-            rev(brewer.pal(7, "Greys")[-1])
-        )
+#' @export
+palette_continuous <- function(x, gray = TRUE) {
+    res <- c(brewer.pal(9, "YlOrBr")[c(3, 5, 7)],
+             brewer.pal(9, "RdBu")[1:4],
+             brewer.pal(11, "PiYG")[4:1],
+             brewer.pal(11, "PRGn")[1:4],
+             brewer.pal(11, "RdYlBu")[7:11],
+             brewer.pal(11, "BrBG")[10:8],
+             brewer.pal(11, "PiYG")[7:11]
     )
+    if (gray) {
+        c(res, rev(brewer.pal(7, "Greys")[-1])) %>%
+            colorRampPalette()
+    } else {
+        colorRampPalette(res)
+    }
+}
+
+palette_discrete2 <- function(x) {
+    list.map(
+        c("RdBu", "PiYG", "PuOr"),
+        f(i) ~ brewer.pal(9, i)[-5]
+    ) %>%
+        unlist() %>%
+        c(
+            brewer.pal(9, "YlOrBr")[4:2],
+            brewer.pal(9, "BrBG")[7:9],
+            rev(brewer.pal(7, "Greys")[-seq(2)])
+        ) %>% unname()
+}
+
+margin_spacer <- function(x, ratio = 5) {
+    tmp <- nchar(levels(factor(x)))[1]
+    if (tmp > 8) {
+        return((tmp - 8) * ratio)
+    }
+    else
+        return(0)
 }
 
 #' Frequency of categorical variable
@@ -176,6 +202,7 @@ str_trunc0 <- function(x, n = 5, sep = " ") {
 #'
 #' @examples
 #' str_pretty("Hi there, I'm a sentence to format.")
+#' @export
 str_pretty <- function(x, width = 20) {
     sapply(
         x,
