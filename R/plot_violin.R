@@ -111,6 +111,7 @@ plot_violin <- function(
         max.overlaps = 10,
         force = 1,
         func_label = format_labels,
+        paired = FALSE,
         ...) {
     if (is.null(title)) {
         if (is.data.frame(x) && length(colnames(x)) == 1) {
@@ -123,7 +124,7 @@ plot_violin <- function(
     if (isFALSE(subtitle)) {
         if (!(class(x) %in% c("data.frame", "tibble")) || ncol(x) == 1) {
             subtitle <- paste0(
-                print_median(x, digits = digits, width = width_text),
+                print_dispersion(x, digits = digits, width = width_text),
                 ", N=",
                 length(na.omit(unlist(x)))
             )
@@ -131,24 +132,50 @@ plot_violin <- function(
             if (test) {
                 tmp <- as.data.frame(x) %>%
                     pivot_longer(everything()) %>%
-                    filter(!is.na(value))
+                    filter(!is.na(value)) %>%
+                    arrange(name)
+
+
+                if (!paired) {
+                    subtitle <- get(paste0(method, "_test"))(tmp, value ~ name)
+                } else {
+                    if (method %in% c("wilcox", "t")) {
+                        subtitle <- get(paste0(method, "_test"))(tmp, value ~ name, paired = TRUE)
+                    } else {
+                        tmp2 <- tmp %>%
+                            group_by(name) %>%
+                            mutate(id = row_number()) %>%
+                            ungroup() %>%
+                            select(id, name, value)
+                        if (method == "kruskal") {
+                            subtitle <- friedman_test(tmp2, value ~ name | id)
+                            effsize <- friedman_effsize(tmp2, value ~ name | id)
+                        } else if (method == "anova") {
+                            subtitle <- anova_test(tmp2, value ~ name + Error(id / name))$ANOVA
+                            effsize <- subtitle$ges
+                        } else {
+                            subtitle <- lmer(value ~ name + (1 | id), data = tmp2)
+                        }
+                    }
+                }
+
                 if (method %in% c("wilcox", "kruskal")) {
                     effsize <- get(paste0(method, "_effsize"))(tmp, value ~ name) %>%
-                        pull("effsize") %>%
-                        round(2)
-                    if (method == "wilcox") {
-                        effsize <- paste0(", r = ", effsize)
-                    } else {
-                        effsize <- paste0(", H = ", effsize)
-                    }
-                } else {
-                    effsize <- aov(value ~ name, data = tmp) %>%
-                        eta_squared()  %>%
-                        round(2) %>%
-                        paste0(", \u03B7² = ", .)
+                        pull("effsize")
                 }
-                subtitle <- get(paste0(method, "_test"))(tmp, value ~ name) %>%
-                    print_mean_test(digits_p = 3, digits = digits) # %>%
+                index <- switch(
+                    method,
+                    "wilcox" = "r",
+                    "kruskal" = "H",
+                    "anova" = "\u03B7²"
+                )
+                if (method != "lmer")
+                    effsize <- paste0(", ", index, " = ", round(effsize, 2))
+                else
+                    effsize <- NULL
+
+
+                subtitle <- print_test(subtitle, digits_p = 3, digits = digits) # %>%
                 # paste0(effsize)
             } else {
                 subtitle <- NULL
@@ -177,7 +204,7 @@ plot_violin <- function(
                         stats,
                         paste0(
                             "\n",
-                            print_median(value, digits = digits, width_label),
+                            print_dispersion(value, digits = digits, width_label),
                             ",\nN=",
                             length(na.omit(value))
                         ),
@@ -326,12 +353,36 @@ plot_violin <- function(
         )
     }
     if ((class(x) %in% c("data.frame", "tibble")) && ncol(x) > 2 && test) {
-        func_posthoc <- ifelse(method == "kruskal", dunn_test, tukey_hsd)
-        post_hoc0 <- func_posthoc(
-            df,
-            value ~ name,
-            p.adjust.method = method_adjust
-        )
+        if (!paired) {
+            func_posthoc <- ifelse(method == "kruskal", dunn_test, tukey_hsd)
+            post_hoc0 <- func_posthoc(
+                df,
+                value ~ name,
+                p.adjust.method = method_adjust
+            )
+        } else {
+            if (method != "lmer") {
+                func_posthoc <- ifelse(method == "kruskal", wilcox_test, pairwise_t_test)
+                func_posthoc(
+                    tmp,
+                    value ~ name,
+                    paired = TRUE,
+                    p.adjust.method = method_adjust
+                )
+            }
+            post_hoc0 <- emmeans(subtitle, ~ name) %>%
+                pairs(adjust = method_adjust) %>%
+                as_tibble() %>%
+                separate(contrast, into = c("group1", "group2"), sep = " - ") %>%
+                rename(
+                    statistic = "t.ratio",
+                    p.adj = "p.value"
+                ) %>%
+                mutate(
+                    .y. = "value"
+                ) %>%
+                add_significance("p.adj")
+        }
         if(!is.null(group_ref)) {
             post_hoc0 <- post_hoc0 %>%
                 filter(str_detect(group1, group_ref) | str_detect(group2, group_ref))
@@ -386,7 +437,7 @@ plot_violin <- function(
         tmp <- list.map(
             x,
             f(i, j) ~{
-                get_outliers(i, replace = FALSE, ...) %>%
+                identify_outliers(i, replace = FALSE, ...) %>%
                     names() %>%
                     as.numeric() %>%
                     `+`((j - 1) * nrow(x))
@@ -427,7 +478,7 @@ plot_violin <- function(
         grid = TRUE
     ) %>% suppressWarnings() +
         theme(
-            plot.margin = margin(l = 0 + margin_spacer(sub_labs, ratio_labs)),
+            # plot.margin = margin(l = 0 + margin_spacer(sub_labs, ratio_labs)),
             plot.subtitle = element_text(hjust = 0.5)
         )
 }
