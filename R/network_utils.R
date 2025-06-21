@@ -136,12 +136,12 @@ Edge <- function(x, y = NULL, digits = 2) {
 #' )
 plot_network <- function(
     x = NULL,
-    title = "",
+    title = NULL,
+    color = c("#eee685", "#686868"),
     cex = 1,
     cex_main = 14 * cex,
     cex_node = 3 * cex,
     cex_edge = 2 * cex,
-    color = c("#eee685", "#686868"),
     shape = "dot",
     dashed = TRUE,
     node = NULL,
@@ -232,12 +232,12 @@ plot_network <- function(
 #' )
 plot_network_dyn <- function(
     x = NULL,
-    title = "",
+    title = NULL,
+    color = c("#eee685", "#686868"),
     cex = 1,
     cex_main = 14 * cex,
     cex_node = 3 * cex,
     cex_edge = 2 * cex,
-    color = c("#eee685", "#686868"),
     shape = "dot",
     dashed = TRUE,
     node = NULL,
@@ -331,11 +331,13 @@ plot_network_dyn <- function(
 #' )
 correlate <- function(
     x,
+    y = NULL,
     method = "spearman",
     method_adjust = "BH",
     cutoff = 0.75) {
     res <- mcor_test(
         x,
+        y,
         estimate = TRUE,
         p.value = TRUE,
         method = method,
@@ -359,6 +361,7 @@ correlate <- function(
 #' @inheritParams plot_pie
 #' @inheritParams plot_violin
 #' @inheritParams correlate
+#' @inheritParams plot_network
 #' @param x Data.frame with column and row names.
 #' @param colour_edge Color vector of length 2 corresponding respectively to
 #' a positive or negative correlation.
@@ -367,8 +370,6 @@ correlate <- function(
 #' @param method Character for the test method ('pearson' or 'spearman').
 #' @param is_cor Boolean to determine if x is a already a correlation object
 #' or not.
-#' @param cex_node Double for the magnification factor for the node width relative
-#' to the default.
 #' @param ... Additional parameters in [visNetwork::visNodes].
 #'
 #' @return visNetwork object
@@ -422,10 +423,11 @@ plot_cor_network <- function(
     is_cor = FALSE,
     cutoff = 0.75,
     digits = 2,
+    dyn = TRUE,
     ...) {
     if (!is_cor) {
         x <- x %>% set_colnames(colnames(.) %>% str_wrap(width_text))
-        x <- correlate(x, method, method_adjust, cutoff)
+        x <- correlate(x, method = method, method_adjust = method_adjust, cutoff = cutoff)
     }
     edge <- Edge(x$r, x$p, digits = digits)
     font <- "14px arial black"
@@ -437,7 +439,18 @@ plot_cor_network <- function(
         colour_edge[2]
     )
 
+    if(dyn)
     plot_network_dyn(
+        dashed = FALSE,
+        node = node,
+        edge = edge,
+        cex = cex,
+        cex_edge = edge$weight * 20 * cex,
+        color = c(colour_node[1], colour_node[2]),
+        ...
+    )
+    else
+    plot_network(
         dashed = FALSE,
         node = node,
         edge = edge,
