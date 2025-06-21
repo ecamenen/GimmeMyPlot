@@ -74,24 +74,42 @@ plot_venn <- function(
     label = TRUE,
     element = TRUE,
     percent = TRUE) {
+    if (!is.list(x) || is.null(names(x))) {
+        stop("x must be a named list.")
+    }
+    width_text <- check_integer(width_text)
+    width_label <- check_integer(width_label)
+    cex <- check_integer(cex)
+    cex_main <- check_integer(cex_main)
+    cex_line <- check_integer(cex_line)
+    n_max <- check_integer(n_max)
+    vjust_label <- check_integer(vjust_label, min = -Inf)
+    ratio <- check_integer(ratio, min = 0)
+    label <- check_boolean(label)
+    element <- check_boolean(element)
+    percent <- check_boolean(percent)
+    colour <- check_colors(colour)
+
     data <- x %>%
         set_names(names(.) %>% str_wrap(width_label)) %>%
         Venn() %>%
         process_data()
     if (percent) {
         data$regionData <- data$regionData %>%
-            mutate(
-                percent = (count * 100 / sum(count)) %>%
-                    round(digits = 0) %>%
-                    paste0("%")
-            ) %>%
-            mutate(
-                label = paste0("(", percent, ")") %>%
-                    paste(count, ., sep = "\n")
-            )
+            mutate(label = count)
+            # mutate(
+            #     percent = (count * 100 / sum(count)) %>%
+            #         round(digits = 0) %>%
+            #         paste0("%")
+            # ) %>%
+            # mutate(
+            #     label = paste0("(", percent, ")") %>%
+            #         paste(count, ., sep = "\n")
+            # )
     } else {
         data$regionData <- mutate(data$regionData, label = count)
     }
+
     data$regionData$label[data$regionData$item %>% list.which(length(.) == 0)] <- ""
     if (element) {
         i <- data$regionData$item %>% list.which(length(.) <= n_max & length(.) > 0)
@@ -99,23 +117,49 @@ plot_venn <- function(
             list.search(length(.) <= n_max & length(.) > 0) %>%
             list.mapv(str_pretty(., width_text) %>% paste(., collapse = "\n"))
     }
-    p <- ggplot() +
-        geom_sf(aes(fill = count), data = venn_region(data)) +
-        geom_sf(
-            aes(colour = id),
-            data = venn_setedge(data),
-            show.legend = FALSE,
-            lwd = cex_line
-        ) +
+
+    region_sf <- data$regionEdge %>%
+        group_by(id) %>%
+        summarise(geometry = st_sfc(st_polygon(list(cbind(X, Y)))), .groups = "drop") %>%
+        st_as_sf()
+
+    region_data <- data$regionData
+    region_sf <- left_join(region_sf, region_data, by = "id") %>%
+        mutate(set_id = ifelse(grepl("^[0-9]+$", id), id, NA))
+
+    if (!isFALSE(color_gradient)) {
+        color_gradient <- check_colors(color_gradient)
+        p <- ggplot() +
+            geom_sf(aes(fill = count), data = region_sf) +
+            geom_sf(
+                aes(colour = set_id),
+                data = region_sf,
+                show.legend = FALSE,
+                lwd = cex_line
+            ) +
+            scale_fill_gradientn(colors = color_gradient, na.value = "black")
+    } else {
+        p <- ggplot() +
+            geom_sf(
+                aes(colour = set_id),
+                data = region_sf,
+                show.legend = FALSE,
+                lwd = cex_line,
+                fill = "white"
+            )
+    }
+
+    p <- p +
         geom_sf_label(
             aes(label = to_title(label)),
-            data = venn_region(data),
+            data = region_sf,
             alpha = 0.5,
-            label.size = NA,
+            label.size = 0,
+            fill = NA,
             size = cex * 4
         ) +
         theme_void() +
-        scale_color_manual(values = colour) +
+        scale_color_manual(values = colour, na.value = "gray50") +
         theme(
             legend.title = element_text(face = "bold.italic", size = cex * 13),
             legend.text = element_text(size = cex * 9)
@@ -123,21 +167,25 @@ plot_venn <- function(
         scale_x_continuous(expand = expansion(mult = ratio))
 
     if (label) {
-        p <- p + geom_sf_text(
+        setlabels <- venn_setlabel(data)
+
+        setlabels_sf <- st_as_sf(
+            setlabels,
+            coords = c("X", "Y"),
+            crs = NA
+        )
+        p <- p +
+            geom_sf_text(
             aes(label = name),
             colour = colour[seq(length(x))],
             vjust = vjust_label,
-            data = venn_setlabel(data),
+            data = setlabels_sf,
             size = cex_main
         )
     }
     p$labels$fill <- "N"
-    if (!isFALSE(color_gradient)) {
+    if (isFALSE(color_gradient)) {
         p <- p +
-            scale_fill_gradientn(colors = color_gradient, na.value = "black")
-    } else {
-        p <- p +
-            scale_fill_gradientn(colors = "white", na.value = "black") +
             theme(legend.position = "none")
     }
     return(p)
