@@ -55,20 +55,20 @@
 #' @export
 plot_radar <- function(
     x,
+    title = NULL,
+    width_text = 30,
+    width_title = 30,
     colour = palette_discrete(),
     cex = 1,
     cex_axis = 1.25 * cex,
     cex_main = 2 * cex,
     cex_sub = 1.5 * cex,
+    digits = 0,
     n_max = NULL,
     add_percent = FALSE,
-    digits = 0,
     n_interval = 2,
     alpha = 0.25,
     legend_position = "bottomright",
-    width_text = 30,
-    width_title = 30,
-    title = NULL,
     ...) {
     if (!is.null(ncol(x))) {
         x <- t(x)
@@ -98,7 +98,7 @@ plot_radar <- function(
         set_rownames(c("Max", "Min")) %>%
         set_colnames(colnames(x)) %>%
         rbind(x)
-
+    # par(oma = c(0,0,0,0), mar = c(5.1, 0, 4.1, 0))
     apply(x0, 2, as.numeric) %>%
         as.data.frame() %>%
         set_colnames(colnames(.) %>% str_wrap(width_text)) %>%
