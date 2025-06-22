@@ -119,6 +119,28 @@ theme_bar <- function(
     }
 }
 
+#' Format numeric labels
+#'
+#' Formats numeric values into human-readable strings, with special handling for
+#' zero and scientific notation. Designed for ggplot2 axis labels or table
+#' formatting where scientific notation or trailing decimals might reduce
+#' readability.
+#'
+#' @param x Numeric vector.
+#'
+#' @examples
+#' # Basic usage
+#' format_labels(c(0.0, 1, 1000, 1e-04, 2.5e+05))
+#'
+#' # With ggplot2
+#' \dontrun{
+#' ggplot(data.frame(x = 1:10, y = c(0.0, 1, 100, 1000, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9))) +
+#'   geom_point() +
+#'   scale_y_continuous(labels = format_labels)
+#' }
+#'
+#' @return Character vector.
+#'
 #' @export
 format_labels <- function(x) {
     labels <- scales::label_number_auto()(x)
@@ -127,7 +149,27 @@ format_labels <- function(x) {
     x[x == "1e+00"] <- "1"
     return(x)
 }
-
+#' Round numbers based on their magnitude
+#'
+#' Rounds numbers to appropriate significant digits depending on their size:
+#' small numbers (absolute value < 1) are rounded to significant digits while
+#' larger numbers are rounded to whole numbers.
+#'
+#' @param x Numeric vector.
+#'
+#' @examples
+#' # Basic usage
+#' round_multiple_digits(c(0.00123, 0.0123, 0.123, 1.23, 12.3, 123))
+#'
+#' # Works with negative numbers
+#' round_multiple_digits(c(-0.000456, -0.0456, -0.456, -4.56, -45.6))
+#'
+#' # Handles zero and edge cases
+#' round_multiple_digits(c(0, 0.999, 1, 1.0001, 1e-10, 1e10))
+#'
+#' @return Numeric vector.
+#'
+#' @export
 round_multiple_digits <- function(x) {
     sapply(x, function(i) {
         if (i < 1) {
