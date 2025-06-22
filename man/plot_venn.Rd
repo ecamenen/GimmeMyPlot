@@ -96,7 +96,7 @@ plot_venn(
     ratio = 0.5,
     label = FALSE,
     element = FALSE,
-    percent = FALSE,
+    percent = FALSE
 )
 
 }

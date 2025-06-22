@@ -62,8 +62,7 @@ relative to the default.}
 \item{method}{Character specifying the type of test: \code{chisq} for chi-squared
 or \code{fisher} for Fisher's exact test.}
 
-\item{method_adjust}{Character for the multiple correction test among
-'BH', 'BY', 'bonferroni', 'fdr', 'hochberg', 'holm', 'hommel', 'none'}
+\item{method_adjust}{Character specifying the p-value adjustment method.}
 
 \item{threshold}{Double for the minimal percentage value before being
 hidden on the plot.}
@@ -72,7 +71,8 @@ hidden on the plot.}
 
 \item{count}{Logical indicating if \code{x} is a contingency table.}
 
-\item{digits}{Integer for the number of decimal places of the test value.}
+\item{digits}{Integer specifying the number of decimal places for the test
+statistic.}
 
 \item{...}{Additional arguments passed to \code{chisq.test} or \code{fisher.test}.}
 }
@@ -90,6 +90,7 @@ characters are used.
 }
 \examples{
 library(magrittr)
+library(RColorBrewer)
 
 # Default parameters
 x <- cbind(

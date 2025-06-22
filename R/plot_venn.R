@@ -54,7 +54,7 @@
 #'     ratio = 0.5,
 #'     label = FALSE,
 #'     element = FALSE,
-#'     percent = FALSE,
+#'     percent = FALSE
 #' )
 #'
 #' @return A ggplot object.

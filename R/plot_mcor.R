@@ -9,7 +9,7 @@
 #'
 #' @inheritParams plot_violin
 #' @inheritParams plot_bar
-#' @inheritParams mcor_test
+#' @inheritParams GimmeMyStats::mcor_test
 #' @param x Data.frame of double variables (with column names).
 #' @param colour Color or vector of colors for the gradient of the bars.
 #' @param method Character for the test method ('pearson', 'kendall', or

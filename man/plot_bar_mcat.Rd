@@ -52,7 +52,7 @@ default.}
 \item{threshold}{Double for the minimal percentage value before being
 hidden on the plot.}
 
-\item{collapse}{Boolean to merge categories with identical proportions.}
+\item{collapse}{Logical indicating whether to merge categories with identical proportions.}
 
 \item{ratio}{Double for the width scale.}
 

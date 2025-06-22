@@ -93,7 +93,7 @@ theme_custom <- function(
         plot.title = element_text(face = "bold", size = cex_main, hjust = 0.5),
         legend.title = element_text(face = "italic", size = cex_sub),
         legend.text = element_text(colour = "black", size = 10 * cex),
-        panel.border = element_rect(colour = "black", fill = NA, size = lwd),
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = lwd),
         axis.ticks = element_line(linewidth = .75 * lwd)
     )
 }

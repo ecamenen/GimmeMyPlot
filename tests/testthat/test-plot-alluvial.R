@@ -8,11 +8,11 @@ x <- lapply(seq(3), function(x) {
 x[x == "a"] <- NA
 x[, 3][is.na(x[, 3])] <- "a"
 
-test_that("piechart default works", {
+test_that("alluvial default works", {
     expect_s3_class(plot_alluvial(x), "ggplot")
 })
 
-test_that("piechart advanced works", {
+test_that("alluvial advanced works", {
     p <- plot_alluvial(
         x,
         width_label = 5,

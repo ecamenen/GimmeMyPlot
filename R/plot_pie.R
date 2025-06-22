@@ -3,7 +3,7 @@
 #' Visualize the proportions of a categorical variable using a piechart
 #'
 #' @inheritParams plot_violin
-#' @inheritParams count_cat
+#' @inheritParams GimmeMyStats::count_cat
 #' @inheritParams ggplot2::margin
 #' @param x Vector of character values visualized on the plot.
 #' @param width_text Integer for the maximum length of the text.

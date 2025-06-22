@@ -50,10 +50,7 @@ relative to the default.}
 
 \item{cex_label}{Integer for the maximum length of the title.}
 
-\item{sort}{Boolean to order the categories by value. If set to false,
-the categories are ranked by their names. Alternatively, it could be
-a character vector of the same length as the number of categories,
-allowing for renaming.}
+\item{sort}{Logical or character vector. If \code{TRUE}, orders categories by frequency. If \code{FALSE}, orders by names. If a character vector, renames and orders categories accordingly.}
 
 \item{threshold}{Double for the minimal percentage value before being
 hidden on the plot.}
@@ -69,7 +66,7 @@ character to rename the legend.}
 \item{sample_size}{Integer for the sample size of the dataset to calculate
 percentages (if different from the length of the variable).}
 
-\item{collapse}{Boolean to merge categories with identical proportions.}
+\item{collapse}{Logical indicating whether to merge categories with identical proportions.}
 
 \item{t, r, b, l}{Dimensions of each margin. (To remember order, think trouble).}
 

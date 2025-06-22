@@ -167,7 +167,7 @@ plot_violin <- function(
                     method,
                     "wilcox" = "r",
                     "kruskal" = "H",
-                    "anova" = "\u03B7²"
+                    "anova" = "eta2"
                 )
                 if (method != "lmer")
                     effsize <- paste0(", ", index, " = ", round(effsize, 2))
@@ -204,7 +204,7 @@ plot_violin <- function(
                         stats,
                         paste0(
                             "\n",
-                            print_dispersion(value, digits = digits, width_label),
+                            print_dispersion(value, digits = digits, width = width_label),
                             ",\nN=",
                             length(na.omit(value))
                         ),
@@ -277,7 +277,7 @@ plot_violin <- function(
             geom = "crossbar",
             width = 0.75,
             aes(ymin = ..y.., ymax = ..y.., colour = colour_fill0),
-            size = 0.5
+            linewidth = 0.5
         ) +
         geom_errorbar(
             width = .5,

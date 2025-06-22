@@ -3,7 +3,7 @@
 #' Visualize the distribution of two categorical variables using a stacked
 #' barplot.
 #'
-#' @inherit post_hoc_chi2
+#' @inherit GimmeMyStats::post_hoc_chi2
 #' @inherit plot_violin
 #' @inherit plot_bar_mcat
 #' @param width_text Integer for the maximum length of the text.
@@ -12,6 +12,7 @@
 #'
 #' @examples
 #' library(magrittr)
+#' library(RColorBrewer)
 #'
 #' # Default parameters
 #' x <- cbind(
