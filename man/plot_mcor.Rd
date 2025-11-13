@@ -7,13 +7,15 @@
 plot_mcor(
   x,
   y = NULL,
-  colour = brewer.pal(n = 8, name = "RdBu"),
+  colour = c(brewer.pal(n = 9, name = "Blues") \%>\% rev(), "white", brewer.pal(n = 9,
+    name = "Reds")),
   cex = 1,
   method = "spearman",
   method_adjust = "BH",
   mat = NULL,
   p_mat = NULL,
   digits = 2,
+  cutoff = 0,
   ...
 )
 }

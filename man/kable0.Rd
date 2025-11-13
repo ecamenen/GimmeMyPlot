@@ -4,7 +4,7 @@
 \alias{kable0}
 \title{Simplified kable table formatting}
 \usage{
-kable0(x, align = "c", color = "#a9a9a9")
+kable0(x, align = "c", color = "#a9a9a9", ...)
 }
 \arguments{
 \item{x}{For \code{kable()}, \code{x} is an R object, which is typically a
@@ -17,6 +17,8 @@ returned value from \code{kable()}.}
 are left-aligned. If \code{length(align) == 1L}, the string will be
 expanded to a vector of individual letters, e.g. \code{'clc'} becomes
 \code{c('c', 'l', 'c')}, unless the output format is LaTeX.}
+
+\item{...}{Other arguments (see Examples and References).}
 }
 \value{
 A kableExtra table object with specified formatting.

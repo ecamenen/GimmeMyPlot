@@ -1,4 +1,4 @@
-#' @import corrplot dplyr fmsb forcats ggalluvial ggforce ggplot2 ggpubr
+#' @import dplyr fmsb forcats ggalluvial ggcorrplot ggforce ggplot2 ggpubr
 #' @import GimmeMyStats purrr RColorBrewer rlist stringi sf
 #' @import stringr tidyr visNetwork
 #' @importFrom grDevices colorRampPalette
@@ -10,6 +10,6 @@
 #' @rawNamespace import(magrittr, except = c(extract, set_names))
 #' @rawNamespace import(scales, except = discard)
 #' @rawNamespace import(stats, except = c(filter, lag))
-#' @rawNamespace import(rstatix, except = identify_outliers)
+#' @rawNamespace import(rstatix, except = c(identify_outliers, cor_pmat))
 #' @keywords internal
 "_PACKAGE"

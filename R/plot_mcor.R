@@ -54,13 +54,17 @@
 #'     cex = 0.8
 #' )
 plot_mcor <- function(
-    x,
-    y = NULL,
-    colour = brewer.pal(n = 8, name = "RdBu"),
-    cex = 1,
-    method = "spearman",
-    method_adjust = "BH",
-    mat = NULL,
+        x,
+        y = NULL,
+        colour = c(
+            brewer.pal(n = 9, name = "Blues") %>% rev(),
+            "white",
+            brewer.pal(n = 9, name = "Reds")
+        ),
+        cex = 1,
+        method = "spearman",
+        method_adjust = "BH",
+        mat = NULL,
     p_mat = NULL,
     digits = 2,
     cutoff = 0,
@@ -76,7 +80,7 @@ plot_mcor <- function(
             method_adjust = method_adjust
         )
         mat <- res$estimate
-        p_mat = res$p.value
+        p_mat <- res$p.value
     }
     if (is.null(mat)) {
         mat <- mcor_test(x, y, TRUE, FALSE, method = method)
@@ -91,28 +95,33 @@ plot_mcor <- function(
             method_adjust = method_adjust
         )
     }
+
     mat[abs(mat) < cutoff] <- 0
     p_mat[abs(mat) < cutoff] <- 1
-    corrplot(
+
+    type <- ifelse(is.null(y), "upper", "full")
+
+    ggcorrplot(
         mat,
-        col = colour,
-        type = ifelse(is.null(y), "upper", "full"),
-        order = "original",
-        tl.col = "gray40",
-        tl.srt = 45,
-        tl.cex = 1 * cex,
+        hc.order = FALSE,
+        type = type,
+        lab = TRUE,
+        lab_size = 3 * cex,
         p.mat = p_mat,
         sig.level = 0.05,
-        # addgrid.col = NA,
-        pch = 4,
-        pch.cex = 2.5 * cex,
-        # pch.col = "white",
-        diag = !is.null(y),
-        na.label = " ",
-        cl.cex = cex * 0.95,
-        cl.align.text = "l",
         insig = "blank",
-        number.digits = digits,
+        show.diag = !is.null(y),
+        digits = digits,
         ...
-    )
+    ) +
+        theme(
+            axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, color = "gray40", size = 10 * cex),
+            axis.text.y = element_text(color = "gray40", size = 10 * cex)
+        ) +
+        GimmeMyPlot::theme_custom() +
+        scale_fill_gradientn(
+            name = "Correlation",
+            colors = colour,
+            limits = c(-1, 1)
+        )
 }

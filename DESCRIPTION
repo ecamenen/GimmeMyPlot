@@ -14,11 +14,11 @@ Description: Simplifies the process of creating essential visualizations
     fundamental graphics in R.
 License: GPL-3
 Imports:
-    corrplot,
     dplyr,
     fmsb,
     forcats,
     ggalluvial,
+    ggcorrplot,
     ggforce,
     ggplot2,
     ggpubr,
