@@ -344,7 +344,10 @@ correlate <- function(
         method_adjust = method_adjust
     )
     r <- res$estimate
-    r[abs(r) < cutoff] <- diag(r) <- 0
+    if (is.null(y)) {
+        diag(r) <- 0
+    }
+    r[abs(r) < cutoff] <- 0
     r[is.na(r)] <- 0
     p <- res$p.value
     r[p >= 0.05] <- 0

@@ -31,9 +31,9 @@
 #' @seealso
 #' \code{\link[kableExtra]{kable}}, \code{\link[kableExtra]{kable_styling}}
 #' @export
-kable0 <- function(x, align = "c", color = "#a9a9a9") {
+kable0 <- function(x, align = "c", color = "#a9a9a9", ...) {
     x %>%
-        kbl(escape = FALSE, align = c("l", rep(align, ncol(x) -1))) %>%
+        kbl(escape = FALSE, align = c("l", rep(align, ncol(x) -1)), ...) %>%
         kable_minimal(full_width = FALSE) %>%
         column_spec(1, bold = TRUE, color = color)
 }

@@ -181,7 +181,7 @@ round_multiple_digits <- function(x) {
     })
 }
 
-axis_log <- function(x, axis = "x", log_power = 10) {
+axis_log <- function(x, axis = "x", log_power = 10, breaks = NULL) {
     min_x <- min(unlist(x), na.rm = TRUE)
     if (min_x == 0) {
         add <- 0.1
@@ -195,13 +195,15 @@ axis_log <- function(x, axis = "x", log_power = 10) {
         log_func <- function(x) log(x + add)
         comp_func <- function(x) exp(x) - add
     }
-    breaks <- c(min_x, max(unlist(x), na.rm = TRUE)) %>%
-        log_func() %>%
-        ceiling()
-    breaks <- seq(breaks[1], breaks[2]) %>%
-        comp_func() %>%
-        round_multiple_digits()
-    get(paste0("scale_", axis, "y_continuous"))(
+    if (is.null(breaks)) {
+        breaks <- c(min_x, max(unlist(x), na.rm = TRUE)) %>%
+            log_func() %>%
+            ceiling()
+        breaks <- seq(breaks[1], breaks[2]) %>%
+            comp_func() %>%
+            round_multiple_digits()
+    }
+    get(paste0("scale_", axis, "_continuous"))(
         trans = trans_new(
             "logxn",
             function(x) log_func(x),

@@ -63,6 +63,7 @@ plot_mcor <- function(
     mat = NULL,
     p_mat = NULL,
     digits = 2,
+    cutoff = 0,
     # TODO: is_cor
     ...) {
     if (is.null(mat) && is.null(p_mat)) {
@@ -90,7 +91,8 @@ plot_mcor <- function(
             method_adjust = method_adjust
         )
     }
-
+    mat[abs(mat) < cutoff] <- 0
+    p_mat[abs(mat) < cutoff] <- 1
     corrplot(
         mat,
         col = colour,

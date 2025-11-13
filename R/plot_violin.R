@@ -478,7 +478,7 @@ plot_violin <- function(
         grid = TRUE
     ) %>% suppressWarnings() +
         theme(
-            # plot.margin = margin(l = 0 + margin_spacer(sub_labs, ratio_labs)),
+            plot.margin = margin(l = 0 + margin_spacer(sub_labs, ratio_labs)),
             plot.subtitle = element_text(hjust = 0.5)
         )
 }
