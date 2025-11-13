@@ -68,7 +68,7 @@ plot_alluvial <- function(
             }
         ) %>%
         unlist()
-    ggplot(
+    p <- ggplot(
         df0,
         aes(
             x = name,
@@ -79,13 +79,26 @@ plot_alluvial <- function(
         )
     ) +
         geom_flow() +
-        geom_stratum(width = 0.5, color = "grey") +
-        geom_text(
-            stat = "stratum",
-            color = "white",
-            label = label_stratum,
-            size = cex * 5.5
-        ) +
+        geom_stratum(width = 0.5, color = "grey")
+
+    strata_data <- df0 %>%
+        count(name, value, name = "n") %>%
+        group_by(name) %>%
+        arrange(desc(value)) %>%
+        mutate(
+            ymax = cumsum(n),
+            ymin = ymax - n,
+            y = (ymax + ymin) / 2,
+            label = ifelse(value == "zz", "NA", value)
+        )
+
+    p + geom_text(
+        data = strata_data,
+        aes(x = name, y = y, label = label, group = NULL),
+        inherit.aes = FALSE,
+        color = "white",
+        size = cex * 5.5
+    ) +
         scale_x_discrete(expand = c(.05, .05)) +
         scale_fill_manual(values = c(colour[n], "gray")) +
         labs(y = "n") +
