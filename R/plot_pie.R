@@ -3,7 +3,7 @@
 #' Visualize the proportions of a categorical variable using a piechart
 #'
 #' @inheritParams plot_violin
-#' @inheritParams GimmeMyStats::count_cat
+#' @inheritParams GimmeMyStats::count_category
 #' @inheritParams ggplot2::margin
 #' @param x Vector of character values visualized on the plot.
 #' @param width_text Integer for the maximum length of the text.
@@ -85,7 +85,7 @@ plot_pie <- function(
     r = -1,
     b = -1,
     angle = 0) {
-    df <- count_cat(
+    df <- count_category(
         x,
         width = width_text,
         collapse = collapse,

@@ -59,7 +59,7 @@ relative to the default.}
 \item{cex_axis}{Double for the magnification factor for the axis labels
 relative to the default.}
 
-\item{method}{Character specifying the type of test: \code{chisq} for chi-squared
+\item{method}{Character specifying the statistical test: \code{chisq} for chi-squared
 or \code{fisher} for Fisher's exact test.}
 
 \item{method_adjust}{Character specifying the p-value adjustment method.}
@@ -69,7 +69,7 @@ hidden on the plot.}
 
 \item{ratio}{Double for scaling the Y-axis.}
 
-\item{count}{Logical indicating if \code{x} is a contingency table.}
+\item{count}{Logical specifying if \code{x} is a contingency table.}
 
 \item{digits}{Integer specifying the number of decimal places for the test
 statistic.}

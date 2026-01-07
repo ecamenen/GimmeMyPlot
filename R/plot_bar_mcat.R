@@ -73,7 +73,7 @@ plot_bar_mcat <- function(
         title <- deparse(substitute(x))
     }
     x0 <- as.data.frame(x)
-    df <- count_cat(
+    df <- count_category(
         x0,
         width = width_text,
         collapse = collapse,

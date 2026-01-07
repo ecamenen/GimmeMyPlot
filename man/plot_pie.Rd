@@ -66,7 +66,7 @@ character to rename the legend.}
 \item{sample_size}{Integer for the sample size of the dataset to calculate
 percentages (if different from the length of the variable).}
 
-\item{collapse}{Logical indicating whether to merge categories with identical proportions.}
+\item{collapse}{Logical specifying whether to merge categories with identical proportions.}
 
 \item{t, r, b, l}{Dimensions of each margin. (To remember order, think trouble).}
 

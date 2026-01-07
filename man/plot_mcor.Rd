@@ -22,7 +22,7 @@ plot_mcor(
 \arguments{
 \item{x}{Data.frame of double variables (with column names).}
 
-\item{y}{Data frame of numerical variables. If \code{NULL}, correlations are calculated within \code{x}.}
+\item{y}{Data frame containing numerical variables. If \code{NULL}, correlations are calculated within \code{x}.}
 
 \item{colour}{Color or vector of colors for the gradient of the bars.}
 
