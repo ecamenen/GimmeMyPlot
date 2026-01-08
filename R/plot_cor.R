@@ -78,7 +78,6 @@ plot_cor <- function(
         colnames(df)[1] <- "y"
         if (is.null(legend))
             legend <- "Legend"
-        print(subtitle0)
         if(length(unique(color)) != ncol(x))
             color <- palette_discrete()
         p <- ggplot(df, aes(x = value, y = y, colour = key)) +

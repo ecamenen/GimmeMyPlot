@@ -27,6 +27,6 @@ test_that("mcor_test advanced works", {
         cex = 0.8
     )
     expect_type(p, "list")
-    expect_equal(colnames(p$corr), colnames(x))
-    expect_equal(rownames(p$corr), colnames(y))
+    expect_equal(as.character(unique(p$data$Var2)), colnames(x))
+    expect_equal(as.character(unique(p$data$Var1)), colnames(y))
 })

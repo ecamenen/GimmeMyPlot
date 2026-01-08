@@ -19,9 +19,9 @@ palette_discrete <- function() {
 #' @export
 palette_continuous <- function(x, gray = TRUE) {
     res <- c(brewer.pal(9, "YlOrBr")[c(3, 5, 7)],
-             brewer.pal(9, "RdBu")[1:4],
+             brewer.pal(9, "RdBu")[seq(4)],
              brewer.pal(11, "PiYG")[4:1],
-             brewer.pal(11, "PRGn")[1:4],
+             brewer.pal(11, "PRGn")[seq(4)],
              brewer.pal(11, "RdYlBu")[7:11],
              brewer.pal(11, "BrBG")[10:8],
              brewer.pal(11, "PiYG")[7:11]

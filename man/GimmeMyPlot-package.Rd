@@ -8,6 +8,14 @@
 \description{
 Simplifies the process of creating essential visualizations in R, offering a range of plotting functions for common chart types like violin plots, pie charts, and histograms. With an intuitive interface, users can effortlessly customize colors, labels, and styles, making it an ideal tool for both beginners and experienced data analysts. Whether exploring datasets or producing quick visual summaries, this package provides a streamlined solution for fundamental graphics in R.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/ecamenen/GimmeMyPlot}
+  \item Report bugs at \url{https://github.com/ecamenen/GimmeMyPlot/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Etienne Camenen \email{etienne.camenen@gmail.com} (\href{https://orcid.org/0000-0002-2398-0190}{ORCID})
 

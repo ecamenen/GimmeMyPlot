@@ -264,7 +264,7 @@ plot_network_dyn <- function(
     node$title <- node$label <- node$id
     node$color.background <- rep(as.vector(color[1]), nrow(node))
     if (label) {
-      edge$label = as.character(edge$label)
+      edge$label <- as.character(edge$label)
     }
 
     visNetwork(
