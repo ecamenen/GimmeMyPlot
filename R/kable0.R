@@ -1,16 +1,16 @@
-#' Simplified kable table formatting
+#' Customized kable
 #'
-#' Creates a minimalist kable table with standardized formatting, including left-aligned
-#' row names and customizable column alignment. Provides quick styling for consistent
-#' table outputs in R Markdown documents.
+#' Creates a customized kable table, including left-aligned
+#' row names and customizable column alignment.
 #'
 #' @inheritParams kableExtra::kbl
+#' @param color Color for the first column.
 #'
 #' @details
 #' This wrapper around \code{kableExtra} provides:
 #' \itemize{
-#'   \item First column in bold with custom color (typically for row names)
-#'   \item Minimalist styling without vertical lines
+#'   \item First column in bold with custom color (for row names).
+#'   \item Minimalist styling without vertical lines.
 #' }
 #'
 #' @examples
@@ -20,14 +20,9 @@
 #'
 #' # Custom alignment and color
 #' kable0(head(iris), align = "r", color = "#2b8cbe")
-#'
-#' # In R Markdown chunk
-#' ```{r}
-#' kable0(head(cars), align = "l")
-#' ```
 #' }
 #'
-#' @return A kableExtra table object with specified formatting.
+#' @return A kableExtra object with specified formatting.
 #' @seealso
 #' \code{\link[kableExtra]{kable}}, \code{\link[kableExtra]{kable_styling}}
 #' @export

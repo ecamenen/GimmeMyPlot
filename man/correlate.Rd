@@ -13,12 +13,13 @@ correlate(
 )
 }
 \arguments{
-\item{x}{Data.frame with column and row names.}
+\item{x}{Data frame containing numerical variables.}
 
-\item{method}{Character for the test method ('pearson' or 'spearman').}
+\item{y}{Data frame containing numerical variables. If \code{NULL}, correlations are calculated within \code{x}.}
 
-\item{method_adjust}{Character for the multiple correction test among
-'BH', 'BY', 'bonferroni', 'fdr', 'hochberg', 'holm', 'hommel', 'none'}
+\item{method}{Character specifying the correlation method: \code{pearson}, \code{kendall}, or \code{spearman}.}
+
+\item{method_adjust}{Character specifying the p-value adjustment method.}
 
 \item{cutoff}{Double for the correlation threshold.}
 }
@@ -27,7 +28,7 @@ List of data.frames containing correlation and p-value matrices.
 }
 \description{
 Calculates the correlation between variables in a data.frame and filters
-according to a threshold
+according to a threshold.
 }
 \examples{
 library(magrittr)

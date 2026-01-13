@@ -2,7 +2,7 @@
 % Please edit documentation in R/kable0.R
 \name{kable0}
 \alias{kable0}
-\title{Simplified kable table formatting}
+\title{Customized kable}
 \usage{
 kable0(x, align = "c", color = "#a9a9a9", ...)
 }
@@ -21,18 +21,17 @@ expanded to a vector of individual letters, e.g. \code{'clc'} becomes
 \item{...}{Other arguments (see Examples and References).}
 }
 \value{
-A kableExtra table object with specified formatting.
+A kableExtra object with specified formatting.
 }
 \description{
-Creates a minimalist kable table with standardized formatting, including left-aligned
-row names and customizable column alignment. Provides quick styling for consistent
-table outputs in R Markdown documents.
+Creates a customized kable table, including left-aligned
+row names and customizable column alignment.
 }
 \details{
 This wrapper around \code{kableExtra} provides:
 \itemize{
-\item First column in bold with custom color (typically for row names)
-\item Minimalist styling without vertical lines
+\item First column in bold with custom color (for row names).
+\item Minimalist styling without vertical lines.
 }
 }
 \examples{
@@ -42,11 +41,6 @@ kable0(head(mtcars))
 
 # Custom alignment and color
 kable0(head(iris), align = "r", color = "#2b8cbe")
-
-# In R Markdown chunk
-```{r}
-kable0(head(cars), align = "l")
-```
 }
 
 }

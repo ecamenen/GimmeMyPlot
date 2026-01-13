@@ -303,11 +303,9 @@ plot_network_dyn <- function(
 #' Correlation tables
 #'
 #' Calculates the correlation between variables in a data.frame and filters
-#' according to a threshold
+#' according to a threshold.
 #'
-#' @inheritParams plot_violin
-#' @param x Data.frame with column and row names.
-#' @param method Character for the test method ('pearson' or 'spearman').
+#' @inheritParams GimmeMyStats::mcor_test
 #' @param cutoff Double for the correlation threshold.
 #'
 #' @return List of data.frames containing correlation and p-value matrices.
