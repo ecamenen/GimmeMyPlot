@@ -1,7 +1,34 @@
-#' Color palette
+#' Custom discrete color palette
 #'
-#' This is an wrapper for the function [RColorBrewer::brewer.pal()].
-#' @return Color vector
+#' Generates a visually distinct color palette for categorical/discrete data by
+#' combining multiple RColorBrewer palettes.
+#'
+#' @return A character vector of 11 hexadecimal color codes representing
+#'   distinct colors suitable for categorical data visualization.
+#'
+#' @examples
+#' # Get the complete palette
+#' colors <- palette_discrete()
+#' print(colors)
+#'
+#' # Visualize the palette
+#' plot(1:11, rep(1, 11), pch = 15, cex = 5, col = colors,
+#'      xlab = "Color index", ylab = "", yaxt = "n",
+#'      main = "Discrete Color Palette")
+#' text(1:11, rep(1, 11), 1:11, col = "white", font = 2)
+#'
+#' # Use in ggplot2
+#' \dontrun{
+#' library(ggplot2)
+#' ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width,
+#'                  color = Species)) +
+#'   geom_point(size = 3) +
+#'   scale_color_manual(values = palette_discrete()[1:3])
+#' }
+#'
+#' @seealso
+#' \code{\link[RColorBrewer]{brewer.pal}} for the source palettes.
+#'
 #' @export
 palette_discrete <- function() {
     c(
@@ -11,13 +38,37 @@ palette_discrete <- function() {
     )
 }
 
-#' Color palette
+#' Custom continuous color palette
 #'
-#' This is an wrapper for the function [RColorBrewer::brewer.pal()].
-#' @param x Integer for the length of the palette
-#' @return Color vector
+#' Generates a continuous color palette combining multiple RColorBrewer
+#' palettes.
+#'
+#' @param gray Boolean indicating whether to include gray tones at the end of
+#'   the palette.
+#'
+#' @return A colorRampPalette object.
+#'
+#' @examples
+#' # Create a palette with gray tones
+#' pal_with_gray <- palette_continuous(gray = TRUE)
+#' plot(1:100, col = pal_with_gray(100), pch = 16, cex = 2)
+#'
+#' # Create a palette without gray tones
+#' pal_no_gray <- palette_continuous(gray = FALSE)
+#' image(volcano, col = pal_no_gray(50))
+#'
+#' # Direct usage in ggplot2
+#' library(ggplot2)
+#' ggplot(data.frame(x = rnorm(1000), y = rnorm(1000))) +
+#'   geom_point(aes(x = x, y = y, color = x + y)) +
+#'   scale_color_gradientn(colors = palette_continuous()(100))
+#'
+#' @seealso
+#' \code{\link[RColorBrewer]{brewer.pal}} for the source palettes,
+#' \code{\link[grDevices]{colorRampPalette}} for gradient generation
+#'
 #' @export
-palette_continuous <- function(x, gray = TRUE) {
+palette_continuous <- function(gray = TRUE) {
     res <- c(brewer.pal(9, "YlOrBr")[c(3, 5, 7)],
              brewer.pal(9, "RdBu")[seq(4)],
              brewer.pal(11, "PiYG")[4:1],
@@ -56,10 +107,34 @@ margin_spacer <- function(x, ratio = 5) {
         return(0)
 }
 
-#' Capitalize  only the first letter
-#' @inherit str_trunc0 return params
+#' Capitalize only the first letter
+#'
+#' Converts the first character of each string to uppercase and leaves all
+#' other characters unchanged.
+#'
+#' @param x A character vector or a single string.
+#'
+#' @return A character vector of the same length as `x`, where each element
+#'   has its first letter capitalized.
+#'
 #' @examples
-#' to_title("hi there, I'm a sentence to format.")
+#' # Basic usage
+#' to_title("hello world")
+#' # Returns: "Hello world"
+#'
+#' # Vectorized operation
+#' to_title(c("apple", "banana", "cherry"))
+#' # Returns: c("Apple", "Banana", "Cherry")
+#'
+#' # Edge cases
+#' to_title(c("", "a", "A", "123abc", NA, NULL))
+#' # Returns: c("", "A", "A", "123abc", NA, NULL)
+#'
+#' @note
+#' This function differs from `tools::toTitleCase()` which capitalizes the
+#' first letter of \emph{each} word. Use `to_title()` when you want only the
+#' first character of the entire string capitalized.
+#'
 #' @export
 to_title <- function(x) {
     lapply(
@@ -74,11 +149,39 @@ to_title <- function(x) {
     ) %>% unlist()
 }
 
-
-#' @inherit str_pretty
-#' @param sep Character to separate the terms.
-# @examples
-# str_trunc1("Hi there, I'm a sentence to format.")
+#' Truncate to a maximum width
+#'
+#' Truncates a string to a maximum width while attempting to preserve complete
+#' words. The function intelligently breaks the string at word boundaries
+#' (specified by `sep`) to create a truncated version that doesn't exceed
+#' the desired width.
+#' @param x A character string to format.
+#' @param width Integer specifying the maximum width (in characters) for the truncated string.
+#'   Must be at least as long as the first word in the string.
+#' @param sep Character used to separate words in the string.
+#' @return A character vector of the same length as `x`, with each element
+#'   formatted.
+#'
+#' @examples
+#' # Basic truncation
+#' str_trunc1("The quick brown fox jumps over the lazy dog", width = 20)
+#' # Returns: "The quick brown fox"
+#'
+#' # With different separator
+#' str_trunc1("apple,banana,cherry,date,elderberry", width = 15, sep = ",")
+#' # Returns: "apple,banana,cherry"
+#'
+#' # Edge cases
+#' str_trunc1("Short", width = 10)  # Returns: "Short" (no truncation needed)
+#'
+#' # NA handling
+#' str_trunc1(NA, width = 10)  # Returns: "NA"
+#'
+#' @seealso
+#' \code{\link{str_trunc0}} for truncation to a number of words,
+#' \code{\link[stringr]{str_pretty}} for pretty truncation.
+#'
+#' @export
 str_trunc1 <- function(x, width = 20, sep = " ") {
     x <- check_character(x)
     sep <- check_character(sep)
@@ -89,40 +192,85 @@ str_trunc1 <- function(x, width = 20, sep = " ") {
         detect(function(x) str_length(x) <= width, .dir = "backward")
 }
 
-#' Truncate a string to maximum number of words.
+#' Truncate to a number of words
 #'
-#' @inherit str_pretty return params
+#' Extracts the first `n` words from a string, separated by a specified
+#' delimiter.
+#'
 #' @inheritParams str_trunc1
-#' @param n Maximum number of words.
+#' @param n Integer specifying the maximum number of words to keep.
+#' @param sep Character to separate words in the string.
 #'
-# @examples
-# str_trunc0("Hi there, I'm a sentence to format.")
+#' @return A character string containing the first `n` words of the input,
+#'   joined by `sep`. If the input has fewer than `n` words,
+#'   returns the original string.
+#'
+#' @examples
+#' # Basic usage
+#' str_trunc0("The quick brown fox jumps over the lazy dog", n = 4)
+#' # Returns: "The quick brown fox"
+#'
+#' # Different separators
+#' str_trunc0("apple,banana,cherry,date,elderberry", n = 3, sep = ",")
+#' # Returns: "apple,banana,cherry"
+#'
+#' @note
+#' To count words in a string before truncating, you can use:
+#' \code{length(strsplit(trimws(x), sep)[[1]])}
+#'
+#' @seealso
+#' \code{\link{str_trunc1}} for width-based truncation,
+#' \code{\link{str_pretty}} for pretty truncation.
+#'
+#' @export
 str_trunc0 <- function(x, n = 5, sep = " ") {
     x <- check_character(x)
     sep <- check_character(sep)
-    res <- strsplit(x, sep)[[1]]
+    res <- str_squish(x) %>%
+        strsplit(sep)[[1]]
     n <- check_integer(n, max = length(res))
     res[seq(n)] %>%
         paste(collapse = sep)
 }
 
-#' Truncate a string to maximum width
+#' Pretty display with intelligent truncation
 #'
-#' Truncate a string to maximum width while ensuring that whole words are
-#' retained
-#' @param x String
-#' @param width Maximum width of string.
-#' @return String
-#' @export
+#' Creates aesthetically formatted strings by trimming, capitalizing, and
+#' intelligently truncating text to fit within a specified width while
+#' preserving readability. Adds ellipsis (...) when truncation occurs.
+#'
+#' @inheritParams str_trunc1
+#' @inherit return str_trunc1
+#' @param x Character vector of strings to format.
 #'
 #' @examples
-#' str_pretty("Hi there, I'm a sentence to format.")
+#' # Basic usage
+#' str_pretty("  hello world, this is a test  ", width = 20)
+#' # Returns: "Hello world, this..."
+#'
+#' # Multiple strings
+#' fruits <- c("  apple pie recipe  ", "banana split dessert", "cherry tart")
+#' str_pretty(fruits, width = 15)
+#' # Returns: c("Apple pie...", "Banana split...", "Cherry tart")
+#'
+#' # Exact fit (no ellipsis)
+#' str_pretty("Perfect fit", width = 11)  # Returns: "Perfect fit"
+#'
+#' # Edge cases
+#' str_pretty(NA, width = 10)             # Returns: "NA"
+#' str_pretty("   ", width = 10)          # Returns: ""
+#'
+#' @seealso
+#' \code{\link{to_title}} for first-letter capitalization,
+#' \code{\link{str_trunc1}} for width-based truncation,
+#' \code{\link{str_trim}} for truncation to a number of words.
+#'
 #' @export
 str_pretty <- function(x, width = 20) {
     sapply(
         x,
         function(i) {
-            i <- str_trim(i) %>% to_title()
+            i <- str_squish(i) %>% to_title()
             res <- str_trunc1(i, width)
             if (is.null(res)) {
                 res <- str_trunc1(i, width, "-")
