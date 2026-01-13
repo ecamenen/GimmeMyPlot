@@ -243,6 +243,15 @@ str_trunc0 <- function(x, n = 5, sep = " ") {
 #' @inherit return str_trunc1
 #' @param x Character vector of strings to format.
 #'
+#' @details
+#' This function applies a series of formatting steps to each string:
+#' 1. **Trim**: Remove extra whitespace.
+#' 2. **Capitalize**: Convert first letter to uppercase.
+#' 3. **Truncate**: Intelligently truncate to fit `width` using word boundaries
+#'    - First attempts truncation using spaces as word separators
+#'    - If that fails, tries using hyphens as separators.
+#' 4. **Ellipsis**: Adds "..." if the string was truncated.
+#'
 #' @examples
 #' # Basic usage
 #' str_pretty("  hello world, this is a test  ", width = 20)
