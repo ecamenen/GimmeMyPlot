@@ -67,13 +67,29 @@ theme_violin <- function(
 
 #' Custom ggplot2 theme
 #'
-#' Provides a customizable theme for ggplot2 graphics with control over text sizes
-#' and line weights. This theme is designed to create consistent and publication-ready
-#' plots with easy parameter adjustments.
+#' A customizable ggplot2 theme with consistent typography and scalable elements
+#' for creating publication-quality plots. All font sizes and line widths
+#' can be adjusted proportionally using a single scaling factor (`cex`).
 #'
 #' @inheritParams plot_violin
 #'
-#' @return A ggplot2 theme object.
+#' @return A complete ggplot2 theme object.
+#'
+#' \dontrun{
+#' library(ggplot2)
+#'
+#' # Basic usage with default scaling
+#' p <- ggplot(mtcars, aes(x = mpg, y = wt)) +
+#'   geom_point(aes(color = factor(cyl))) +
+#'   labs(title = "Car Weight vs MPG",
+#'        subtitle = "By Number of Cylinders",
+#'        x = "Miles per Gallon",
+#'        y = "Weight (1000 lbs)") +
+#'   theme_custom()
+#'
+#' print(p)
+#' }
+#'
 #' @export
 theme_custom <- function(
     cex = 1,
@@ -97,7 +113,6 @@ theme_custom <- function(
         axis.ticks = element_line(linewidth = .75 * lwd)
     )
 }
-
 
 theme_bar <- function(
     p,
@@ -149,6 +164,7 @@ format_labels <- function(x) {
     x[x == "1e+00"] <- "1"
     return(x)
 }
+
 #' Round numbers based on their magnitude
 #'
 #' Rounds numbers to appropriate significant digits depending on their size:
@@ -181,6 +197,94 @@ round_multiple_digits <- function(x) {
     })
 }
 
+#' Create logarithmic axis transformations
+#'
+#' Generates ggplot2 axis scales with custom logarithmic transformations,
+#' including support for handling zero values and custom break points.
+#'
+#' @param x Numeric vector or list of values to determine axis range.
+#' @param axis Character specifying which axis to transform: "x" or "y".
+#' @param log_power Integer specifying the base of the logarithm. Must be > 0. Common values:
+#'   - `10`: Common logarithm (default)
+#'   - `2`: Binary logarithm
+#'   - `1`: Natural logarithm
+#'   If `log_power <= 1`, uses natural log as fallback.
+#' @param breaks Numeric vector of break points in the original data scale.
+#'   If `NULL` (default), automatically generates appropriate breaks based on
+#'   the data range and logarithmic transformation.
+#'
+#' @return A ggplot2 scale object (`ScaleContinuousPosition`).
+#'
+#' @section Mathematical details:
+#' When `log_power > 1`:
+#' - Forward: `log(x + add, base = log_power)`
+#' - Inverse: `log_power^x - add`
+#'
+#' When `log_power <= 1` (uses natural log as fallback):
+#' - Forward: `log(x + add)`
+#' - Inverse: `exp(x) - add`
+#'
+#' Where `add = 0.1` if data contains zeros, otherwise `add = 0`.
+#'
+#' @examples
+#' \dontrun{
+#' library(ggplot2)
+#'
+#' # Basic log10 scale
+#' data <- data.frame(
+#'   x = 10^(1:5),
+#'   y = 1:5
+#' )
+#'
+#' ggplot(data, aes(x, y)) +
+#'   geom_point() +
+#'   axis_log(data$x, axis = "x", log_power = 10)
+#'
+#' # Handle zeros with offset
+#' data_with_zero <- data.frame(
+#'   x = c(0, 1, 10, 100, 1000),
+#'   y = 1:5
+#' )
+#'
+#' ggplot(data_with_zero, aes(x, y)) +
+#'   geom_point() +
+#'   axis_log(data_with_zero$x, axis = "x", log_power = 10)
+#'
+#' # Natural log scale
+#' ggplot(data, aes(x, y)) +
+#'   geom_point() +
+#'   axis_log(data$x, axis = "x", log_power = exp(1))
+#'
+#' # Custom breaks
+#' custom_breaks <- c(1, 10, 100, 1000)
+#' ggplot(data, aes(x, y)) +
+#'   geom_point() +
+#'   axis_log(data$x, axis = "x", breaks = custom_breaks)
+#'
+#' # Y-axis transformation
+#' ggplot(data, aes(y, x)) +
+#'   geom_point() +
+#'   axis_log(data$x, axis = "y")
+#'
+#' # Multiple data series (list input)
+#' multi_data <- list(
+#'   series1 = c(1, 10, 100),
+#'   series2 = c(5, 50, 500)
+#' )
+#' ggplot() +
+#'   geom_point(aes(x = multi_data$series1, y = 1:3)) +
+#'   geom_point(aes(x = multi_data$series2, y = 1:3), color = "red") +
+#'   axis_log(multi_data, axis = "x")
+#'
+#' @note
+#' \itemize{
+#'   \item When data contains zeros, the offset (0.1) is added to all values
+#'     before taking the logarithm. This may distort very small values.
+#'   \item The function assumes positive values. Negative values will produce
+#'     NaN with a warning.
+#' }
+#'
+#' @export
 axis_log <- function(x, axis = "x", log_power = 10, breaks = NULL) {
     min_x <- min(unlist(x), na.rm = TRUE)
     if (min_x == 0) {
