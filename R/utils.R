@@ -179,7 +179,7 @@ to_title <- function(x) {
 #'
 #' @seealso
 #' \code{\link{str_trunc0}} for truncation to a number of words,
-#' \code{\link[stringr]{str_pretty}} for pretty truncation.
+#' \code{\link{str_pretty}} for pretty truncation.
 #'
 #' @export
 str_trunc1 <- function(x, width = 20, sep = " ") {
@@ -227,7 +227,8 @@ str_trunc0 <- function(x, n = 5, sep = " ") {
     x <- check_character(x)
     sep <- check_character(sep)
     res <- str_squish(x) %>%
-        strsplit(sep)[[1]]
+        strsplit(sep) %>%
+        .[[1]]
     n <- check_integer(n, max = length(res))
     res[seq(n)] %>%
         paste(collapse = sep)
@@ -240,7 +241,7 @@ str_trunc0 <- function(x, n = 5, sep = " ") {
 #' preserving readability. Adds ellipsis (...) when truncation occurs.
 #'
 #' @inheritParams str_trunc1
-#' @inherit return str_trunc1
+#' @inherit str_trunc1 return
 #' @param x Character vector of strings to format.
 #'
 #' @details
@@ -272,7 +273,7 @@ str_trunc0 <- function(x, n = 5, sep = " ") {
 #' @seealso
 #' \code{\link{to_title}} for first-letter capitalization,
 #' \code{\link{str_trunc1}} for width-based truncation,
-#' \code{\link{str_trim}} for truncation to a number of words.
+#' \code{\link{str_trunc0}} for truncation to a number of words.
 #'
 #' @export
 str_pretty <- function(x, width = 20) {
@@ -280,6 +281,9 @@ str_pretty <- function(x, width = 20) {
         x,
         function(i) {
             i <- str_squish(i) %>% to_title()
+            if (is.na(i) | i == "") {
+                return(i)
+            }
             res <- str_trunc1(i, width)
             if (is.null(res)) {
                 res <- str_trunc1(i, width, "-")

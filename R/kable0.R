@@ -6,6 +6,8 @@
 #' @inheritParams kableExtra::kbl
 #' @param color Color for the first column.
 #'
+#' @return A kableExtra object with specified formatting.
+#'
 #' @details
 #' This wrapper around \code{kableExtra} provides:
 #' \itemize{
@@ -22,7 +24,6 @@
 #' kable0(head(iris), align = "r", color = "#2b8cbe")
 #' }
 #'
-#' @return A kableExtra object with specified formatting.
 #' @seealso
 #' \code{\link[kableExtra]{kable}}, \code{\link[kableExtra]{kable_styling}}
 #' @export

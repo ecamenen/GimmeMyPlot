@@ -75,6 +75,7 @@ theme_violin <- function(
 #'
 #' @return A complete ggplot2 theme object.
 #'
+#' @examples
 #' \dontrun{
 #' library(ggplot2)
 #'
@@ -143,6 +144,8 @@ theme_bar <- function(
 #'
 #' @param x Numeric vector.
 #'
+#' @return Character vector.
+#'
 #' @examples
 #' # Basic usage
 #' format_labels(c(0.0, 1, 1000, 1e-04, 2.5e+05))
@@ -153,8 +156,6 @@ theme_bar <- function(
 #'   geom_point() +
 #'   scale_y_continuous(labels = format_labels)
 #' }
-#'
-#' @return Character vector.
 #'
 #' @export
 format_labels <- function(x) {
@@ -173,6 +174,8 @@ format_labels <- function(x) {
 #'
 #' @param x Numeric vector.
 #'
+#' @return Numeric vector.
+#'
 #' @examples
 #' # Basic usage
 #' round_multiple_digits(c(0.00123, 0.0123, 0.123, 1.23, 12.3, 123))
@@ -182,8 +185,6 @@ format_labels <- function(x) {
 #'
 #' # Handles zero and edge cases
 #' round_multiple_digits(c(0, 0.999, 1, 1.0001, 1e-10, 1e10))
-#'
-#' @return Numeric vector.
 #'
 #' @export
 round_multiple_digits <- function(x) {
@@ -215,7 +216,7 @@ round_multiple_digits <- function(x) {
 #'
 #' @return A ggplot2 scale object (`ScaleContinuousPosition`).
 #'
-#' @section Mathematical details:
+#' @details
 #' When `log_power > 1`:
 #' - Forward: `log(x + add, base = log_power)`
 #' - Inverse: `log_power^x - add`
@@ -275,6 +276,7 @@ round_multiple_digits <- function(x) {
 #'   geom_point(aes(x = multi_data$series1, y = 1:3)) +
 #'   geom_point(aes(x = multi_data$series2, y = 1:3), color = "red") +
 #'   axis_log(multi_data, axis = "x")
+#' }
 #'
 #' @note
 #' \itemize{
