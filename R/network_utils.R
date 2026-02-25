@@ -1,24 +1,36 @@
-#' Node (for a network)
+#' Customize Node object
 #'
-#' Counts the number of connections to a node.
+#' Calculates node sizes based on their connectivity in a network graph.
 #'
-#' @inheritParams plot_network
+#' @param x `Edge` object containing network connections.
 #' @param cex Double for the magnification factor for the node width relative
 #' to the default.
 #' @param scale Boolean to scale the size of the nodes (to divide by the size of
 #' the biggest node).
 #'
-#' @return A node object in the form of a data.frame with two columns: id and
-#' size. The first column contains the node's name, the second its size.
-#' @export
+#' @return A `Node` object containing:
+#'   \item{id}{Character or factor specifying node identifier/name.}
+#'   \item{size}{Numeric specifying node size based on connection count, optionally scaled.}
 #'
 #' @examples
+#' # Create example adjacency matrix
 #' x <- sapply(seq(5), function(j) runif(5))
 #' x[x < 0.5] <- diag(x) <- 0
 #' colnames(x) <- rownames(x) <- paste("Variable", seq(5))
 #' x[lower.tri(x)] <- t(x)[lower.tri(x)]
+#'
+#' # Basic node
 #' e <- Edge(x)
 #' Node(e)
+#'
+#' # Create Node object without scaling (raw counts)
+#' Node(e, cex = 10, scale = FALSE)
+#'
+#' @seealso
+#' \code{\link{Edge}} for creating edge objects,
+#' \code{\link{plot_network}} for visualizing networks.
+#'
+#' @export
 Node <- function(x, cex = 12, scale = TRUE) {
     stopifnot(is(x, "Edge"))
     res <- unlist(x[, seq(2)]) %>%
@@ -34,25 +46,48 @@ Node <- function(x, cex = 12, scale = TRUE) {
     return(res)
 }
 
-#' Edge (for a network)
+#' Customize Edge object
 #'
-#' Extracts variable pairs with non-zero values as edges.
+#' Extracts non-zero variable pairs from symmetric adjacency matrices to create
+#' an edge list suitable for network analysis.
 #'
 #' @inheritParams plot_network
-#' @param x,y Symmetrical data.frame with column and row names.
+#' @param x,y Symmetric numeric matrix or data.frame with identical row and
+#'   column names.
 #'
-#' @return An object edge in the form of a data.frame with three columns: from,
-#'  to and weight. The first two columns contain the names of the variable
-#'  pairs, and the last, the corresponding values.
-#' @export
+#' @return An `Edge` object containing:
+#'   \describe{
+#'     \item{from}{Character for source node identifier (column name)}.
+#'     \item{to}{Character for target node identifier (row name)}.
+#'     \item{weight}{Numeric for edge weight from matrix `x`}.
+#'     \item{p}{Numeric (optional) for secondary value from matrix `y`, if provided}.
+#'     \item{label}{Character for rounded weight formatted to `digits` decimal places}.
+#'     \item{title}{Character. Same as `label`, for compatibility with visualization tools}.
+#'   }
+#'
+#' @details
+#' When two matrices are provided (`x` and `y`), both matrices must have identical dimensions, symmetry,
+#' and row/column names. Each edge appears only once in the output, avoiding duplication.
 #'
 #' @examples
-#' x <- sapply(seq(5), function(j) runif(5))
+#' # Create a symmetric adjacency matrix
+#' set.seed(123)
+#' n <- 5
+#' x <- matrix(runif(n^2), n, n)
 #' x[x < 0.5] <- diag(x) <- 0
 #' colnames(x) <- rownames(x) <- paste("Variable", seq(5))
 #' x[lower.tri(x)] <- t(x)[lower.tri(x)]
+#'
 #' Edge(x)
-#' Edge(x, x)
+#'
+#' # With second matrix (e.g., p-values)
+#' Edge(x, x, digits = 3)
+#'
+#' @seealso
+#' \code{\link{Node}} for creating node objects,
+#' \code{\link{plot_network}} for visualizing networks.
+#'
+#' @export
 Edge <- function(x, y = NULL, digits = 2) {
     stopifnot(isSymmetric(x))
     if (!is.null(y)) {
@@ -95,33 +130,49 @@ Edge <- function(x, y = NULL, digits = 2) {
 
 #' Network plot
 #'
-#' Plot the connection between variables. The higher the number of connections,
-#' the larger the node.
+#' Plot a network showing connections between variables.
+#' Nodes represent variables, and edges represent connections between them.
+#' Node size is proportional to the number of connections (degree centrality), and
+#' edge thickness represents connection strength.
 #'
 #' @inheritParams plot_violin
-#' @param x Symmetrical data.frame with column and row names.
+#' @param x Optional symmetric adjacency matrix with row and column names.
+#'   If `edge` and `nodes` are provided, they take precedence.
 #' @param cex_node Double for the magnification factor for the node width
 #' relative to the default.
 #' @param cex_edge Double for the magnification factor for the edge width
 #' relative to the default.
-#' @param color Color vector of length 2 corresponding respectively to
-#' background and node label.
+#' @param color Character vector of length 2 specifying:
+#'   \enumerate{
+#'     \item Background of node
+#'     \item Text and edge label color
+#'   }
 #' @param shape Character for node shape (among: 'circle', 'square' or 'none').
-#' @param dashed Boolean for dashed edges.
-#' @param node Node object.
-#' @param edge Edge object.
-#' @param dist Integer for text distance from node.
-#' @param label Boolean for edge text display.
+#' @param dashed Boolean indicating whether edges should be displayed as dashed lines.
+#' @param node `Node` object.
+#' @param edge `Edge` object containing network connection.
+#' @param dist Integer between 0 (centered) and 1 (beside the node) for the distance of the label from the center of the  node.
+#' @param label Boolean indicating whether to display edge labels showing connection
+#'              weights.
+#' @param ... Additional arguments (see  \code{\link[igraph]{plot.common}})
 #'
-#' @return NULL (launch a basic plot)
-#' @export
+#' @return No return value, called for side effects.
+#'
+#' @details
+#' If only an adjacency matrix (`x`) is provided, the function automatically
+#' creates `Edge` and `Node` objects.
 #'
 #' @examples
+#' # Create example adjacency matrix
 #' x <- sapply(seq(5), function(j) runif(5))
 #' x[x < 0.5] <- diag(x) <- 0
 #' colnames(x) <- rownames(x) <- paste("Variable", seq(5))
 #' x[lower.tri(x)] <- t(x)[lower.tri(x)]
+#'
+#' # Basic plot
 #' plot_network(x)
+#'
+#' # Customized plot
 #' e <- Edge(x)
 #' plot_network(
 #'     title = "Gimme a network",
@@ -129,11 +180,18 @@ Edge <- function(x, y = NULL, digits = 2) {
 #'     color = c("white", "black"),
 #'     shape = "square",
 #'     dashed = FALSE,
-#'     edge = e,
+#'     edge = Edge(x),
 #'     node = Node(e),
 #'     dist = 6,
-#'     label = TRUE
+#'     label = TRUE,
+#'     digits = 1
 #' )
+#'
+#' @seealso
+#' \code{\link{Edge}} and \code{\link{Node}} for creating edge and node objects,
+#' \code{\link{plot_network_dyn}} for visualizing interactive networks.
+#'
+#' @export
 plot_network <- function(
     x = NULL,
     title = NULL,
@@ -148,7 +206,8 @@ plot_network <- function(
     edge = NULL,
     dist = 1,
     label = FALSE,
-    digits = 2) {
+    digits = 2,
+    ...) {
     title <- paste0(title, collapse = " ")
     if (is.null(edge)) {
         edge <- Edge(x, digits = digits)
@@ -197,29 +256,38 @@ plot_network <- function(
         vertex.label.family = "sans",
         vertex.size = cex_node * node$size * 0.5,
         vertex.frame.width = cex_node * 0.9,
-        margin = c(0.1, 0, 0, 0)
+        margin = c(0.1, 0, 0, 0),
+        ...
     )
     title(title, cex.main = cex_main * 0.1)
 }
 
-#' Network plot (dynamic)
+#' Network plot (interactive)
 #'
-#' Plot the connection between variables (dynamic plot). The higher the number
-#' of connections, the larger the node.
+#' Plot an interactive network showing connections between variables. Nodes represent variables, and edges represent connections between them.
+#' Node size is proportional to the number of connections (degree centrality), and
+#' edge thickness represents connection strength.
 #'
 #' @inheritParams plot_violin
 #' @inheritParams plot_network
 #' @inheritParams plot_cor_network
+#' @param ... Additional arguments passed to \code{\link[visNetwork]{visNodes}}.
 #'
-#' @return visNetwork object
-#' @export
+#' @inherit plot_network details
+#'
+#' @return A visNetwork object.
 #'
 #' @examples
+#' # Create example adjacency matrix
 #' x <- sapply(seq(5), function(j) runif(5))
 #' x[x < 0.5] <- diag(x) <- 0
 #' colnames(x) <- rownames(x) <- paste("Variable", seq(5))
 #' x[lower.tri(x)] <- t(x)[lower.tri(x)]
-#' plot_network(x)
+#'
+#' # Basic plot
+#' plot_network_dyn(x)
+#'
+#' # Customized plot
 #' e <- Edge(x)
 #' plot_network_dyn(
 #'     title = "Gimme a network",
@@ -230,6 +298,37 @@ plot_network <- function(
 #'     edge = e,
 #'     node = Node(e)
 #' )
+#'
+#' @examples
+#' # example code
+#'
+#' # Create example adjacency matrix
+#' x <- sapply(seq(5), function(j) runif(5))
+#' x[x < 0.5] <- diag(x) <- 0
+#' colnames(x) <- rownames(x) <- paste("Variable", seq(5))
+#' x[lower.tri(x)] <- t(x)[lower.tri(x)]
+#'
+#' # Basic plot
+#' plot_network_dyn (x)
+#'
+#' # Customized plot
+#' plot_network_dyn (
+#'     title = "Gimme a network",
+#'     cex = 1.5,
+#'     color = c("white", "black"),
+#'     shape = "square",
+#'     dashed = FALSE,
+#'     edge = Edge(x),
+#'     node = Node(e),
+#'     label = TRUE,
+#'     digits = 1
+#' )
+#'
+#' @seealso
+#' \code{\link{Edge}} and \code{\link{Node}} for creating edge and node objects,
+#' \code{\link{plot_network}} for visualizing networks.
+#'
+#' @export
 plot_network_dyn <- function(
     x = NULL,
     title = NULL,
@@ -309,7 +408,6 @@ plot_network_dyn <- function(
 #' @param cutoff Double for the correlation threshold.
 #'
 #' @return List of data.frames containing correlation and p-value matrices.
-#' @export
 #'
 #' @examples
 #' library(magrittr)
@@ -327,6 +425,11 @@ plot_network_dyn <- function(
 #'     method_adjust = "none",
 #'     cutoff = 0.7
 #' )
+#'
+#' @seealso
+#' \code{\link[GimmeMyStats]{mcor_test}} for correlations between multiple variables.
+#'
+#' @export
 correlate <- function(
     x,
     y = NULL,
@@ -353,11 +456,17 @@ correlate <- function(
 }
 
 
-#' Correlation network
+#' Generates a network plot showing connections between variables. #' Nodes represent variables, and edges represent connections between them.
+#' Node size is proportional to the number of connections (degree centrality), and
+#' edge thickness represents connection strength.
+
+#' Correlation network plot
 #'
-#' Plot a correlation network. The higher the number of connections, the larger
-#' the node. By default, negative correlations are shown in red, positive
-#' correlations in green.
+#' Plot a network to visualize correlation patterns
+#' between variables. The network represents variables as nodes and significant
+#' correlations as edges. Node size reflects the number of connections (degree centrality), while edge color indicates
+#' correlation direction (positive/negative)
+#' and thickness represents correlation strength
 #'
 #' @inheritParams plot_pie
 #' @inheritParams plot_violin
@@ -369,16 +478,17 @@ correlate <- function(
 #' @param colour_node Color vector of length 2 corresponding respectively to
 #'  background and node label.
 #' @param method Character for the test method ('pearson' or 'spearman').
-#' @param is_cor Boolean to determine if x is a already a correlation object
-#' or not.
+#' @param is_cor Boolean indicating whether \code{x} is a already a correlation object
+#' from \code{\link{correlate}}.
 #' @param ... Additional parameters in [visNetwork::visNodes].
 #'
-#' @return visNetwork object
-#' @export
+#' @return A visNetwork object.
 #'
 #' @examples
 #' library(magrittr)
 #' library(RColorBrewer)
+#'
+#' # Create example matrix
 #' x <- runif(20)
 #' x <- lapply(
 #'     c(1, -1),
@@ -386,7 +496,11 @@ correlate <- function(
 #' ) %>%
 #'     Reduce(cbind, .) %>%
 #'     set_colnames(paste("Variable", seq(20)))
+#'
+#' # Example 1: Basic correlation network (interactive)
 #' plot_cor_network(x)
+#'
+#' # Example 2: Customized network with specific parameters
 #' plot_cor_network(
 #'     x,
 #'     colour_edge = c(
@@ -400,6 +514,8 @@ correlate <- function(
 #'     cutoff = 0.7,
 #'     digits = 1
 #' )
+#'
+#' # Example 3: Using pre-computed correlation object
 #' cor_obj <- correlate(x)
 #' plot_cor_network(
 #'     cor_obj,
@@ -412,6 +528,31 @@ correlate <- function(
 #'     is_cor = TRUE,
 #'     digits = 1
 #' )
+#'
+# Example 4: Static network (non-interactive)
+#' plot_cor_network(
+#'     x,
+#'     dyn = FALSE,
+#'     cutoff = 0.8,
+#'     cex = 1.2
+#' )
+#'
+#' # Example 5: Advanced customization with node shapes
+#' plot_cor_network(
+#'     x,
+#'     colour_node = c("lightblue", "darkblue"),
+#'     shape = "square",           # passed via ...
+#'     cutoff = 0.6,
+#'     cex = 1.3
+#' )
+#'
+#' @seealso
+#' \itemize{
+#'   \item \code{\link{plot_network_dyn}} for interactive network,
+#'   \item \code{\link{plot_network}} for static network.
+#' }
+#'
+#' @export
 plot_cor_network <- function(
     x = NULL,
     width_text = 30,

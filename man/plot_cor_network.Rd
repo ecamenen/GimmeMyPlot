@@ -2,7 +2,10 @@
 % Please edit documentation in R/network_utils.R
 \name{plot_cor_network}
 \alias{plot_cor_network}
-\title{Correlation network}
+\title{Generates a network plot showing connections between variables. #' Nodes represent variables, and edges represent connections between them.
+Node size is proportional to the number of connections (degree centrality), and
+edge thickness represents connection strength.
+Correlation network plot}
 \usage{
 plot_cor_network(
   x = NULL,
@@ -40,10 +43,10 @@ relative to the default.}
 \item{method}{Character for the test method ('pearson' or 'spearman').}
 
 \item{method_adjust}{Character for the multiple correction test among
-'BH', 'BY', 'bonferroni', 'fdr', 'hochberg', 'holm', 'hommel', 'none'}
+'BH', 'BY', 'bonferroni', 'fdr', 'hochberg', 'holm', 'hommel', 'none'.}
 
-\item{is_cor}{Boolean to determine if x is a already a correlation object
-or not.}
+\item{is_cor}{Boolean indicating whether \code{x} is a already a correlation object
+from \code{\link{correlate}}.}
 
 \item{cutoff}{Double for the correlation threshold.}
 
@@ -52,16 +55,20 @@ or not.}
 \item{...}{Additional parameters in \link[visNetwork:visNodes]{visNetwork::visNodes}.}
 }
 \value{
-visNetwork object
+A visNetwork object.
 }
 \description{
-Plot a correlation network. The higher the number of connections, the larger
-the node. By default, negative correlations are shown in red, positive
-correlations in green.
+Plot a network to visualize correlation patterns
+between variables. The network represents variables as nodes and significant
+correlations as edges. Node size reflects the number of connections (degree centrality), while edge color indicates
+correlation direction (positive/negative)
+and thickness represents correlation strength
 }
 \examples{
 library(magrittr)
 library(RColorBrewer)
+
+# Create example matrix
 x <- runif(20)
 x <- lapply(
     c(1, -1),
@@ -69,7 +76,11 @@ x <- lapply(
 ) \%>\%
     Reduce(cbind, .) \%>\%
     set_colnames(paste("Variable", seq(20)))
+
+# Example 1: Basic correlation network (interactive)
 plot_cor_network(x)
+
+# Example 2: Customized network with specific parameters
 plot_cor_network(
     x,
     colour_edge = c(
@@ -83,6 +94,8 @@ plot_cor_network(
     cutoff = 0.7,
     digits = 1
 )
+
+# Example 3: Using pre-computed correlation object
 cor_obj <- correlate(x)
 plot_cor_network(
     cor_obj,
@@ -95,4 +108,27 @@ plot_cor_network(
     is_cor = TRUE,
     digits = 1
 )
+
+plot_cor_network(
+    x,
+    dyn = FALSE,
+    cutoff = 0.8,
+    cex = 1.2
+)
+
+# Example 5: Advanced customization with node shapes
+plot_cor_network(
+    x,
+    colour_node = c("lightblue", "darkblue"),
+    shape = "square",           # passed via ...
+    cutoff = 0.6,
+    cex = 1.3
+)
+
+}
+\seealso{
+\itemize{
+\item \code{\link{plot_network_dyn}} for interactive network,
+\item \code{\link{plot_network}} for static network.
+}
 }

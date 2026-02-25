@@ -2,7 +2,7 @@
 % Please edit documentation in R/network_utils.R
 \name{plot_network_dyn}
 \alias{plot_network_dyn}
-\title{Network plot (dynamic)}
+\title{Network plot (interactive)}
 \usage{
 plot_network_dyn(
   x = NULL,
@@ -26,8 +26,11 @@ plot_network_dyn(
 
 \item{title}{Character for the title.}
 
-\item{color}{Color vector of length 2 corresponding respectively to
-background and node label.}
+\item{color}{Character vector of length 2 specifying:
+\enumerate{
+\item Background of node
+\item Text and edge label color
+}}
 
 \item{cex}{Double for the magnification factor for the text relative to the
 default.}
@@ -43,31 +46,42 @@ relative to the default.}
 
 \item{shape}{Character for node shape (among: 'circle', 'square' or 'none').}
 
-\item{dashed}{Boolean for dashed edges.}
+\item{dashed}{Boolean indicating whether edges should be displayed as dashed lines.}
 
-\item{node}{Node object.}
+\item{node}{\code{Node} object.}
 
-\item{edge}{Edge object.}
+\item{edge}{\code{Edge} object containing network connection.}
 
-\item{label}{Boolean for edge text display.}
+\item{label}{Boolean indicating whether to display edge labels showing connection
+weights.}
 
 \item{digits}{Integer for the number of decimals.}
 
-\item{...}{Additional parameters in \link[visNetwork:visNodes]{visNetwork::visNodes}.}
+\item{...}{Additional arguments passed to \code{\link[visNetwork]{visNodes}}.}
 }
 \value{
-visNetwork object
+A visNetwork object.
 }
 \description{
-Plot the connection between variables (dynamic plot). The higher the number
-of connections, the larger the node.
+Plot an interactive network showing connections between variables. Nodes represent variables, and edges represent connections between them.
+Node size is proportional to the number of connections (degree centrality), and
+edge thickness represents connection strength.
+}
+\details{
+If only an adjacency matrix (\code{x}) is provided, the function automatically
+creates \code{Edge} and \code{Node} objects.
 }
 \examples{
+# Create example adjacency matrix
 x <- sapply(seq(5), function(j) runif(5))
 x[x < 0.5] <- diag(x) <- 0
 colnames(x) <- rownames(x) <- paste("Variable", seq(5))
 x[lower.tri(x)] <- t(x)[lower.tri(x)]
-plot_network(x)
+
+# Basic plot
+plot_network_dyn(x)
+
+# Customized plot
 e <- Edge(x)
 plot_network_dyn(
     title = "Gimme a network",
@@ -78,4 +92,33 @@ plot_network_dyn(
     edge = e,
     node = Node(e)
 )
+
+# example code
+
+# Create example adjacency matrix
+x <- sapply(seq(5), function(j) runif(5))
+x[x < 0.5] <- diag(x) <- 0
+colnames(x) <- rownames(x) <- paste("Variable", seq(5))
+x[lower.tri(x)] <- t(x)[lower.tri(x)]
+
+# Basic plot
+plot_network_dyn (x)
+
+# Customized plot
+plot_network_dyn (
+    title = "Gimme a network",
+    cex = 1.5,
+    color = c("white", "black"),
+    shape = "square",
+    dashed = FALSE,
+    edge = Edge(x),
+    node = Node(e),
+    label = TRUE,
+    digits = 1
+)
+
+}
+\seealso{
+\code{\link{Edge}} and \code{\link{Node}} for creating edge and node objects,
+\code{\link{plot_network}} for visualizing networks.
 }

@@ -33,7 +33,7 @@ default.}
 'spearman').}
 
 \item{method_adjust}{Character for the multiple correction test among
-'BH', 'BY', 'bonferroni', 'fdr', 'hochberg', 'holm', 'hommel', 'none'}
+'BH', 'BY', 'bonferroni', 'fdr', 'hochberg', 'holm', 'hommel', 'none'.}
 
 \item{mat}{Matrix of double for correlation coefficients (with column and
 row names).}
@@ -44,7 +44,7 @@ names).}
 \item{digits}{Integer for the number of decimals.}
 }
 \value{
-NULL (launch a basic plot)
+A ggplot object.
 }
 \description{
 Display a heatmap of correlation coefficients (with p-values between several

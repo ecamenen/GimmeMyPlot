@@ -2,12 +2,12 @@
 % Please edit documentation in R/network_utils.R
 \name{Node}
 \alias{Node}
-\title{Node (for a network)}
+\title{Customize Node object}
 \usage{
 Node(x, cex = 12, scale = TRUE)
 }
 \arguments{
-\item{x}{Symmetrical data.frame with column and row names.}
+\item{x}{\code{Edge} object containing network connections.}
 
 \item{cex}{Double for the magnification factor for the node width relative
 to the default.}
@@ -16,17 +16,29 @@ to the default.}
 the biggest node).}
 }
 \value{
-A node object in the form of a data.frame with two columns: id and
-size. The first column contains the node's name, the second its size.
+A \code{Node} object containing:
+\item{id}{Character or factor specifying node identifier/name.}
+\item{size}{Numeric specifying node size based on connection count, optionally scaled.}
 }
 \description{
-Counts the number of connections to a node.
+Calculates node sizes based on their connectivity in a network graph.
 }
 \examples{
+# Create example adjacency matrix
 x <- sapply(seq(5), function(j) runif(5))
 x[x < 0.5] <- diag(x) <- 0
 colnames(x) <- rownames(x) <- paste("Variable", seq(5))
 x[lower.tri(x)] <- t(x)[lower.tri(x)]
+
+# Basic node
 e <- Edge(x)
 Node(e)
+
+# Create Node object without scaling (raw counts)
+Node(e, cex = 10, scale = FALSE)
+
+}
+\seealso{
+\code{\link{Edge}} for creating edge objects,
+\code{\link{plot_network}} for visualizing networks.
 }

@@ -2,28 +2,51 @@
 % Please edit documentation in R/network_utils.R
 \name{Edge}
 \alias{Edge}
-\title{Edge (for a network)}
+\title{Customize Edge object}
 \usage{
 Edge(x, y = NULL, digits = 2)
 }
 \arguments{
-\item{x, y}{Symmetrical data.frame with column and row names.}
+\item{x, y}{Symmetric numeric matrix or data.frame with identical row and
+column names.}
 
 \item{digits}{Integer for the number of decimals.}
 }
 \value{
-An object edge in the form of a data.frame with three columns: from,
-to and weight. The first two columns contain the names of the variable
-pairs, and the last, the corresponding values.
+An \code{Edge} object containing:
+\describe{
+\item{from}{Character for source node identifier (column name)}.
+\item{to}{Character for target node identifier (row name)}.
+\item{weight}{Numeric for edge weight from matrix \code{x}}.
+\item{p}{Numeric (optional) for secondary value from matrix \code{y}, if provided}.
+\item{label}{Character for rounded weight formatted to \code{digits} decimal places}.
+\item{title}{Character. Same as \code{label}, for compatibility with visualization tools}.
+}
 }
 \description{
-Extracts variable pairs with non-zero values as edges.
+Extracts non-zero variable pairs from symmetric adjacency matrices to create
+an edge list suitable for network analysis.
+}
+\details{
+When two matrices are provided (\code{x} and \code{y}), both matrices must have identical dimensions, symmetry,
+and row/column names. Each edge appears only once in the output, avoiding duplication.
 }
 \examples{
-x <- sapply(seq(5), function(j) runif(5))
+# Create a symmetric adjacency matrix
+set.seed(123)
+n <- 5
+x <- matrix(runif(n^2), n, n)
 x[x < 0.5] <- diag(x) <- 0
 colnames(x) <- rownames(x) <- paste("Variable", seq(5))
 x[lower.tri(x)] <- t(x)[lower.tri(x)]
+
 Edge(x)
-Edge(x, x)
+
+# With second matrix (e.g., p-values)
+Edge(x, x, digits = 3)
+
+}
+\seealso{
+\code{\link{Node}} for creating node objects,
+\code{\link{plot_network}} for visualizing networks.
 }

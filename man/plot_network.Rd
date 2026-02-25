@@ -18,16 +18,21 @@ plot_network(
   edge = NULL,
   dist = 1,
   label = FALSE,
-  digits = 2
+  digits = 2,
+  ...
 )
 }
 \arguments{
-\item{x}{Symmetrical data.frame with column and row names.}
+\item{x}{Optional symmetric adjacency matrix with row and column names.
+If \code{edge} and \code{nodes} are provided, they take precedence.}
 
 \item{title}{Character for the title.}
 
-\item{color}{Color vector of length 2 corresponding respectively to
-background and node label.}
+\item{color}{Character vector of length 2 specifying:
+\enumerate{
+\item Background of node
+\item Text and edge label color
+}}
 
 \item{cex}{Double for the magnification factor for the text relative to the
 default.}
@@ -43,31 +48,45 @@ relative to the default.}
 
 \item{shape}{Character for node shape (among: 'circle', 'square' or 'none').}
 
-\item{dashed}{Boolean for dashed edges.}
+\item{dashed}{Boolean indicating whether edges should be displayed as dashed lines.}
 
-\item{node}{Node object.}
+\item{node}{\code{Node} object.}
 
-\item{edge}{Edge object.}
+\item{edge}{\code{Edge} object containing network connection.}
 
-\item{dist}{Integer for text distance from node.}
+\item{dist}{Integer between 0 (centered) and 1 (beside the node) for the distance of the label from the center of the  node.}
 
-\item{label}{Boolean for edge text display.}
+\item{label}{Boolean indicating whether to display edge labels showing connection
+weights.}
 
 \item{digits}{Integer for the number of decimals.}
+
+\item{...}{Additional arguments (see  \code{\link[igraph]{plot.common}})}
 }
 \value{
-NULL (launch a basic plot)
+No return value, called for side effects.
 }
 \description{
-Plot the connection between variables. The higher the number of connections,
-the larger the node.
+Plot a network showing connections between variables.
+Nodes represent variables, and edges represent connections between them.
+Node size is proportional to the number of connections (degree centrality), and
+edge thickness represents connection strength.
+}
+\details{
+If only an adjacency matrix (\code{x}) is provided, the function automatically
+creates \code{Edge} and \code{Node} objects.
 }
 \examples{
+# Create example adjacency matrix
 x <- sapply(seq(5), function(j) runif(5))
 x[x < 0.5] <- diag(x) <- 0
 colnames(x) <- rownames(x) <- paste("Variable", seq(5))
 x[lower.tri(x)] <- t(x)[lower.tri(x)]
+
+# Basic plot
 plot_network(x)
+
+# Customized plot
 e <- Edge(x)
 plot_network(
     title = "Gimme a network",
@@ -75,9 +94,15 @@ plot_network(
     color = c("white", "black"),
     shape = "square",
     dashed = FALSE,
-    edge = e,
+    edge = Edge(x),
     node = Node(e),
     dist = 6,
-    label = TRUE
+    label = TRUE,
+    digits = 1
 )
+
+}
+\seealso{
+\code{\link{Edge}} and \code{\link{Node}} for creating edge and node objects,
+\code{\link{plot_network_dyn}} for visualizing interactive networks.
 }

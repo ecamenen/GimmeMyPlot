@@ -46,4 +46,8 @@ correlate(
     method_adjust = "none",
     cutoff = 0.7
 )
+
+}
+\seealso{
+\code{\link[GimmeMyStats]{mcor_test}} for correlations between multiple variables.
 }
