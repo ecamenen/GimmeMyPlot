@@ -88,12 +88,15 @@ plot_bar_2cat <- function(
     } else {
         df0$var2 <- df0$var2 %>% factor(levels = sort)
     }
-    df0$var1 <- str_wrap(df0$var1, width =  width_text)
+    df0$var1 <- to_title(df0$var1) %>% str_wrap(width =  width_text)
     if (is.null(legend)) {
         df0$var1 <- factor(df0$var1)
     } else {
-        legend <- str_wrap(legend, width =  width_text)
-        stopifnot(legend %in% unique(df0$var1) %>% all())
+        legend0 <- legend
+        legend <- to_title(legend) %>% str_wrap(width =  width_text)
+        if (!legend %in% unique(df0$var1) %>% all()) {
+            warning(paste(legend0, " does not match with all the level names."))
+        }
         df0$var1 <- df0$var1 %>% factor(levels = legend)
     }
     if (is.null(colour)) {
