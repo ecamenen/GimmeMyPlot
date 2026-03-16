@@ -73,7 +73,7 @@ plot_pie <- function(
     cex_main = cex * 1.5,
     cex_label = cex * 1.25,
     sort = TRUE,
-    threshold = 5,
+    threshold = 0,
     hsize = 1.5,
     legend = TRUE,
     label = FALSE,
@@ -101,6 +101,9 @@ plot_pie <- function(
     }
     if (!is.null(legend) && !is.logical(legend)) {
         df$f <- factor(df$f, levels = legend)
+        df <- complete(df, f = levels(f), fill = list(n = 0)) %>%
+            mutate(f = factor(f, levels = legend)) %>%
+            arrange(f)
     }
 
     df <- mutate(
@@ -122,6 +125,7 @@ plot_pie <- function(
     df$legend[df$legend == "NA"] <- NA
     if (!percent) {
         df$text <- df$n
+        df$text[df$text <= threshold] <- ""
     }
     p <- ggplot(df, aes(x = hsize, y = n, fill = f)) +
         geom_col(width = 1, color = NA) +
@@ -137,7 +141,8 @@ plot_pie <- function(
             na.value = "gray",
             labels = df$legend0,
             breaks = df$legend,
-            name = ""
+            name = "",
+            drop = FALSE
         ) +
         scale_y_continuous(breaks = df$pos, labels = df$label) +
         ggtitle(str_wrap(title, width_title)) +
