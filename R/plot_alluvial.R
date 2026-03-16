@@ -43,7 +43,8 @@ plot_alluvial <- function(
     width_label = 20,
     colour = palette_discrete(),
     cex = 1,
-    cex_axis = 17 * cex) {
+    cex_axis = 17 * cex,
+    sort = FALSE) {
     colnames(x) <- colnames(x) %>%
         str_wrap(width_label) %>%
         to_title()
@@ -58,16 +59,11 @@ plot_alluvial <- function(
         mutate(id = rownames(.)) %>%
         pivot_longer(-id)
 
-    label_stratum <- df %>%
-        select(sort(colnames(.))) %>%
-        lapply(
-            function(i) {
-                unique(i) %>%
-                    sort(decreasing = TRUE) %>%
-                    str_replace_all("zz", "NA")
-            }
-        ) %>%
-        unlist()
+
+    if (isFALSE(sort)) {
+        df0 <- mutate(df0, name = factor(name, levels = colnames(x)))
+    }
+
     p <- ggplot(
         df0,
         aes(
@@ -101,7 +97,7 @@ plot_alluvial <- function(
     ) +
         scale_x_discrete(expand = c(.05, .05)) +
         scale_fill_manual(values = c(colour[n], "gray")) +
-        labs(y = "n") +
+        labs(y = "Count") +
         theme_minimal() +
         theme_custom(cex = cex * 1, cex_axis = cex_axis) +
         theme(
