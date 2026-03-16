@@ -1,6 +1,6 @@
 #' Piechart
 #'
-#' Visualize the proportions of a categorical variable using a piechart
+#' Visualize the proportions of a categorical variable using a piechart.
 #'
 #' @inheritParams plot_violin
 #' @inheritParams GimmeMyStats::count_category
@@ -100,8 +100,9 @@ plot_pie <- function(
         }
     }
     if (!is.null(legend) && !is.logical(legend)) {
-        df$f <- factor(df$f, labels = legend)
+        df$f <- factor(df$f, levels = legend)
     }
+
     df <- mutate(
         df,
         hsize = hsize,

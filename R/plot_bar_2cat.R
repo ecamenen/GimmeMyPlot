@@ -62,7 +62,8 @@ plot_bar_2cat <- function(
         digits = 1,
         ...
 ) {
-    x <- as.data.frame(x) -> x0
+    x <- as.data.frame(x) %>%
+        mutate(across(everything(), ~ as.character(.))) -> x0
     if (count) {
         tmp <- x %>%
             mutate(Category = rownames(.)) %>%
