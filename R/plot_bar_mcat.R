@@ -102,7 +102,7 @@ plot_bar_mcat <- function(
       tail(n_max)
     y_lab0 <- as.character(df$f)
     y_lab0[(str_count(y_lab0, "\\,") + 1) >= n_collapse] <- "..."
-    i <- df$y_lab < threshold
+    i <- df$y_lab < threshold / 2
     df$x_lab[i] <- ""
     (ggplot(df, aes(f, n, fill = order, label = n0)) +
         geom_bar(stat = "identity") +
@@ -116,8 +116,9 @@ plot_bar_mcat <- function(
             size = cex
         ) +
         geom_text(
-            aes(label = x_lab, color = colour_gradient),
+            aes(label = x_lab),
             data = df,
+            color = colour_gradient,
             hjust = hjust_text,
             vjust = vjust_text,
             size = cex
