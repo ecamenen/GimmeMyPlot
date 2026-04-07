@@ -124,7 +124,11 @@ plot_violin <- function(
     if (isFALSE(subtitle)) {
         if (!(class(x) %in% c("data.frame", "tibble")) || ncol(x) == 1) {
             subtitle <- paste0(
-                print_dispersion(x, digits = digits, width = width_text),
+                print_dispersion(x, digits = digits, width = width_text) %>%
+                    map_chr(~ str_split(.x, "\\+/-")[[1]] %>%
+                                as.numeric() %>%
+                                func_label() %>%
+                                str_c(collapse = "+/-")),
                 ", N=",
                 length(na.omit(unlist(x)))
             )
@@ -204,7 +208,12 @@ plot_violin <- function(
                         stats,
                         paste0(
                             "\n",
-                            print_dispersion(value, digits = digits, width = width_label),
+                            print_dispersion(value, digits = digits, width = width_label) %>%
+                                map_chr(~ str_split(.x, "\\+/-")[[1]] %>%
+                                            as.numeric() %>%
+                                            func_label() %>%
+                                            str_c(collapse = " +/- ") %>%
+                                            str_wrap(width_label)),
                             ",\nN=",
                             length(na.omit(value))
                         ),
