@@ -27,13 +27,11 @@
 #' @examples
 #' library(magrittr)
 #'
-#' df <- sapply(
-#'     seq(2),
-#'     function(x) {
-#'         runif(10, 1, 100) %>%
-#'             set_names(paste("Variable", letters[seq(10)]))
-#'     }
-#' ) %>% set_colnames(paste("Sample", LETTERS[seq(2)]))
+#' df <- replicate(2, runif(10, 1, 100)) %>%
+#' t() %>%
+#'     as.data.frame() %>%
+#'     set_rownames(paste("Sample", LETTERS[1:2])) %>%
+#'     set_colnames(paste("Variable", letters[1:10]))
 #'
 #' # Default parameters
 #' plot_radar(df[, 1])
@@ -71,7 +69,6 @@ plot_radar <- function(
     legend_position = "bottomright",
     ...) {
     if (!is.null(ncol(x))) {
-        x <- t(x)
         n <- ncol(x)
         colors <- colour[seq(n)]
     } else {
