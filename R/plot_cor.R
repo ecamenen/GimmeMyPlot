@@ -1,4 +1,4 @@
-#' export
+#' @export
 plot_cor <- function(
         x,
         y = NULL,

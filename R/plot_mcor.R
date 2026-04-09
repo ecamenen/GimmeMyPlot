@@ -69,7 +69,8 @@ plot_mcor <- function(
     digits = 2,
     cutoff = 0,
     # TODO: is_cor
-    ...) {
+    ...
+) {
     if (is.null(mat) && is.null(p_mat)) {
         res <- mcor_test(
             x,
@@ -114,11 +115,14 @@ plot_mcor <- function(
         digits = digits,
         ...
     ) +
+        theme_custom() +
         theme(
             axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, color = "gray40", size = 10 * cex),
-            axis.text.y = element_text(color = "gray40", size = 10 * cex)
+            axis.text.y = element_text(color = "gray40", size = 10 * cex),
+            panel.border = element_blank(),
+            panel.grid = element_blank(),
+            axis.ticks = element_blank()
         ) +
-        GimmeMyPlot::theme_custom() +
         scale_fill_gradientn(
             name = "Correlation",
             colors = colour,

@@ -43,6 +43,7 @@ plot_bar_2cat <- function(
         width_text = 30,
         width_title = 10,
         width_legend = 10,
+        width_legend_text = 20,
         colour = NULL,
         colour_text = "white",
         cex = 1,
@@ -135,6 +136,7 @@ plot_bar_2cat <- function(
                     (as.numeric(rownames(.)) * max_val / ratio)
             )
     }
+    counts$var1 <- str_wrap(counts$var1, width = width_legend_text)
     p <- ggplot(data = counts, aes(x = var2, y = Freq, fill = var1)) +
         geom_bar(stat = "identity", position = "stack") +
         xlab(to_title(colnames(x)[2])) +
