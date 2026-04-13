@@ -34,7 +34,7 @@
 #'     set_colnames(paste("Variable", letters[1:10]))
 #'
 #' # Default parameters
-#' plot_radar(df[, 1])
+#' plot_radar(df[1, ])
 #'
 #' # Advanced parameters
 #' plot_radar(
@@ -68,9 +68,9 @@ plot_radar <- function(
     alpha = 0.25,
     legend_position = "bottomright",
     ...) {
-    if (!is.null(ncol(x))) {
+    if (!is.null(nrow(x))) {
         n <- ncol(x)
-        colors <- colour[seq(n)]
+        colors <- colour[seq(nrow(x))]
     } else {
         n <- length(x)
         colors <- colour[1]
