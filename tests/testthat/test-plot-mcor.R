@@ -14,7 +14,7 @@ y <- lapply(
     .[, seq(5)]
 
 test_that("mcor_test default works", {
-    expect_type(plot_mcor(x), "list")
+    expect_s3_class(plot_mcor(x), "ggplot")
 })
 
 test_that("mcor_test advanced works", {
@@ -26,7 +26,7 @@ test_that("mcor_test advanced works", {
         method_adjust = "none",
         cex = 0.8
     )
-    expect_type(p, "list")
+    expect_s3_class(p, "ggplot")
     expect_equal(as.character(unique(p$data$Var2)), colnames(x))
     expect_equal(as.character(unique(p$data$Var1)), colnames(y))
 })
