@@ -1,23 +1,31 @@
 #' Alluvial diagram
 #'
-#' Display how the frequency of observations are distributed along multiple
-#' categorical variables. The width of the links and the height of the bars
-#' are proportional to the the number of cases. Alluvial diagrams are a good
-#' alternative to multiple pie charts.
+#' Plot an alluvial diagram to visualize how observations flow across multiple
+#' categorical variables. Alluvial diagrams are an alternative to
+#' multiple pie charts or stacked bar charts, showing the distribution
+#' and transitions between categories across different dimensions. The width of
+#' the links (flows) and the height of the strata (bars) are proportional to the
+#' number of observations.
 #'
 #' @inheritParams plot_violin
 #' @inheritParams plot_venn
-#' @param x Data.frame of multiple categorical variables.
-#' @param colour Color or vector of colors for the categories.
+#' @param x Data.frame containing multiple categorical variables (factors or
+#'          character vectors). Each column represents a categorical variable,
+#'          and each row represents an observation.
+#' @param colour Color or vector of colors for the different categories.
+#' @param sort Boolean indicating whether to sort the strata (bars) within each
+#'             column alphabetically by category name. If \code{FALSE} (default),
+#'             strata are displayed in the order they appear in the data
 #'
-#' @return ggplot object.
-#' @export
+#' @return A ggplot object.
 #'
 #' @examples
 #' library(ggalluvial)
 #' library(magrittr)
 #' library(RColorBrewer)
 #'
+#' # Generate example data with three categorical variables
+#' set.seed(123)
 #' x <- lapply(seq(3), function(x) {
 #'     runif(100, 1, 3) %>%
 #'         round() %>%
@@ -25,19 +33,23 @@
 #' }) %>%
 #'     as.data.frame() %>%
 #'     set_colnames(paste("variable", LETTERS[seq(3)]))
+#'
+#' # Introduce some missing values for demonstration
 #' x[x == "a"] <- NA
 #' x[, 3][is.na(x[, 3])] <- "a"
 #'
-#' # Default parameters
+#' # Example 1: Basic alluvial diagram with default parameters
 #' plot_alluvial(x)
 #'
-#' # Advanced parameters
+#' # Example 2: Customized diagram with red color palette
 #' plot_alluvial(
 #'     x,
 #'     width_label = 5,
 #'     colour = rev(brewer.pal(3, "Reds")),
 #'     cex = 1.5
 #' )
+#'
+#' @export
 plot_alluvial <- function(
     x,
     width_label = 20,
