@@ -480,6 +480,9 @@ correlate <- function(
 #' @param method Character for the test method ('pearson' or 'spearman').
 #' @param is_cor Boolean indicating whether \code{x} is a already a correlation object
 #' from \code{\link{correlate}}.
+#' @param dyn Boolean indicating whether to create an interactive plot
+#' (\code{TRUE}, using \code{\link{plot_network_dyn}}) or a static plot
+#' (\code{FALSE}, using \code{\link{plot_network}}).
 #' @param ... Additional parameters in [visNetwork::visNodes].
 #'
 #' @return A visNetwork object.
