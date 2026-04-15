@@ -50,13 +50,13 @@ plot_heatmap <- function(
     }
     p <- x %>%
         as.data.frame() %>%
-        mutate(ID = rownames(.)) %>%
-        gather("key", "value", -ID) %>%
+        mutate(id = rownames(.)) %>%
+        gather("key", "value", -id) %>%
         mutate(
             key = factor(key, levels = col_names),
-            ID = str_wrap(ID, width_text)
+            id = str_wrap(id, width_text)
         ) %>%
-        ggplot(aes(ID, key, fill = value)) +
+        ggplot(aes(id, key, fill = value)) +
         geom_tile() +
         theme_classic() +
         theme_custom(cex) +
