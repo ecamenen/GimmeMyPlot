@@ -10,16 +10,16 @@
 #' @inheritParams plot_violin
 #' @inheritParams plot_bar
 #' @inheritParams GimmeMyStats::mcor_test
+#' @inheritParams correlate
 #' @param x Data.frame of double variables (with column names).
 #' @param colour Color or vector of colors for the gradient of the bars.
-#' @param method Character for the test method ('pearson', 'kendall', or
-#' 'spearman').
 #' @param mat Matrix of double for correlation coefficients (with column and
 #' row names).
 #' @param p_mat Matrix of double for adjusted p-values (with column and row
 #' names).
+#' @param ... Additional parameters for [ggcorrplot::ggcorrplot].
 #'
-#' @return NULL (launch a basic plot)
+#' @return A ggplot object.
 #' @export
 #'
 #' @examples
@@ -54,50 +54,38 @@
 #'     cex = 0.8
 #' )
 plot_mcor <- function(
-        x,
-        y = NULL,
-        colour = c(
-            brewer.pal(n = 9, name = "Blues") %>% rev(),
-            "white",
-            brewer.pal(n = 9, name = "Reds")
-        ),
-        cex = 1,
-        method = "spearman",
-        method_adjust = "BH",
-        mat = NULL,
+    x,
+    y = NULL,
+    colour = c(
+        brewer.pal(n = 9, name = "Blues") %>% rev(),
+        "white",
+        brewer.pal(n = 9, name = "Reds")
+    ),
+    cex = 1,
+    method = "spearman",
+    method_adjust = "BH",
+    mat = NULL,
     p_mat = NULL,
     digits = 2,
     cutoff = 0,
     # TODO: is_cor
     ...
 ) {
-    if (is.null(mat) && is.null(p_mat)) {
-        res <- mcor_test(
+    if (is.null(mat) || is.null(p_mat)) {
+        res <- correlate(
             x,
             y,
-            TRUE,
-            TRUE,
             method = method,
-            method_adjust = method_adjust
+            method_adjust = method_adjust,
+            cutoff = cutoff
         )
-        mat <- res$estimate
-        p_mat <- res$p.value
     }
     if (is.null(mat)) {
-        mat <- mcor_test(x, y, TRUE, FALSE, method = method)
+        mat <- res$r
     }
     if (is.null(p_mat)) {
-        p_mat <- mcor_test(
-            x,
-            y,
-            FALSE,
-            TRUE,
-            method = method,
-            method_adjust = method_adjust
-        )
+        p_mat <- res$p
     }
-
-    mat[abs(mat) < cutoff] <- 0
     p_mat[abs(mat) < cutoff] <- 1
 
     type <- ifelse(is.null(y), "upper", "full")
