@@ -154,7 +154,7 @@ Edge <- function(x, y = NULL, digits = 2) {
 #' @param dist Integer between 0 (centered) and 1 (beside the node) for the distance of the label from the center of the  node.
 #' @param label Boolean indicating whether to display edge labels showing connection
 #'              weights.
-#' @param ... Additional arguments (see  \code{\link[igraph]{plot.common}})
+#' @param ... Additional arguments (see  \code{\link[igraph]{plot.common}}).
 #'
 #' @return No return value, called for side effects.
 #'
@@ -271,7 +271,7 @@ plot_network <- function(
 #' @inheritParams plot_violin
 #' @inheritParams plot_network
 #' @inheritParams plot_cor_network
-#' @param ... Additional arguments passed to \code{\link[visNetwork]{visNodes}}.
+#' @param ... Additional parameters for \code{\link[visNetwork]{visNodes}}.
 #'
 #' @inherit plot_network details
 #'
@@ -483,7 +483,7 @@ correlate <- function(
 #' @param dyn Boolean indicating whether to create an interactive plot
 #' (\code{TRUE}, using \code{\link{plot_network_dyn}}) or a static plot
 #' (\code{FALSE}, using \code{\link{plot_network}}).
-#' @param ... Additional parameters in [visNetwork::visNodes].
+#' @param ... Additional parameters for [visNetwork::visNodes].
 #'
 #' @return A visNetwork object.
 #'
