@@ -8,7 +8,6 @@
 #' @inherit plot_bar_mcat
 #' @param width_text Integer for the maximum length of the text.
 #' @param width_legend Integer for the maximum length of the legend.
-#' @param ratio Double for scaling the Y-axis.
 #'
 #' @examples
 #' library(magrittr)

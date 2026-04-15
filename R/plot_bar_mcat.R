@@ -1,29 +1,37 @@
-#' Barplot for categorical variables
+#' Barplot for a multiple categorical variable
 #'
-#' Visualize the proportions of multiple categorical variables using a
-#' barplot
+#' Plot the frequencies of a multinominal (multi-level) variable using a barplot.
 #'
 #' @inheritParams plot_pie
 #' @inheritParams plot_violin
 #' @inheritParams plot_bar
-#' @param x Data.frame of character values visualized on the plot.
-#' @param colour_gradient Color or vector of colors for the categories.
-#' @param colour_text Color of the text.
-#' @param ratio Double for the width scale.
-#' @param n_collapse Integer for the maximum number of merged categories to show
-#' @param n_max Integer for the maximum number of bars to show
+#' @inheritParams GimmeMyStats::count_category
+#' @param colour_gradient Color vector for the gradient fill bar.
+#' @param colour_text Color of the text labels inside bars.
+#' @param ratio Double specifying the ratio for expanding the y-axis limit.
+#' @param n_collapse Integer for the maximum number of merged levels to display Otherwise, their names will be abbreviated with '...'.
+#' @param n_max Integer for the maximum number of bars to display
 #' (prioritizing those with the largest value).
 #' @param hjust_title Double for the horizontal justification of the title.
 #' @param hjust_text Double for the horizontal justification of the text.
 #' @param vjust_text Double for the vertical justification of the text.
+#' @param inverse Boolean indicating whether to invert the display. When \code{TRUE}, shows frequencies instead of percentages in the bars, and percentages instead of frequencies near the bars.
 #'
 #' @examples
 #' library(magrittr)
 #' library(RColorBrewer)
 #'
 #' # Default parameters
-#' df <- sapply(seq(10), function(x) runif(10) %>% round()) %>% as.data.frame()
-#' colnames(df) <- paste("Level", seq(10))
+#' k <- 10
+#' n <- runif(k, 1, 10) %>% round()
+#' x <- paste("Level", seq(k)) %>%
+#'   mapply(function(x, y) rep(x, y), ., n) %>%
+#'   unlist()
+#' plot_bar_mcat(x)
+#'
+#' # Using a different input format
+#' df <- table(seq_along(x), factor(x, levels = paste("Level", seq(k)))) %>%
+#' as.data.frame.matrix()
 #' plot_bar_mcat(df)
 #'
 #' # Advanced parameters
