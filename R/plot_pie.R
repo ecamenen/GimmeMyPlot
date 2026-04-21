@@ -24,11 +24,12 @@
 #' library(magrittr)
 #' library(RColorBrewer)
 #'
-#' # Default parameters
-#' x <- c(rep("A", 5), rep("B", 4))
+#' # Example 1: Basic pie chart
+#' x <- c(rep("B", 4), rep("A", 5))
+#' x[4] <- NA
 #' plot_pie(x)
 #'
-#' # Advanced parameters
+#' # Example 2: Pic chart with labels and raw values
 #' plot_pie(
 #'     x,
 #'     label = TRUE,
@@ -36,30 +37,33 @@
 #'     sort = FALSE,
 #'     percent = FALSE
 #' )
+#' # Example 3: Custom legend and sample size
 #' plot_pie(
 #'     x,
-#'     sort = c("A", "B"),
-#'     legend = paste("Level", seq(2)),
+#'     sort = c("B", "A"),
+#'     legend = paste("Level", seq(3)),
 #'     sample_size = 11,
-#'     threshold = 20
+#'     threshold = 30
 #' )
 #'
+#' set.seed(123)
 #' k <- 10
 #' n <- runif(k, 1, 10) %>% round()
 #' x <- paste("Level", seq(k)) %>%
 #'     mapply(function(x, y) rep(x, y), ., n) %>%
 #'     unlist()
+#' # Example 4: Multiple categories with color gradient
 #' plot_pie(
 #'     x,
 #'     title = "Some categorical variable",
-#'     width_text = 5,
+#'     width_text = 100,
 #'     width_title = 20,
 #'     colour = rev(brewer.pal(9, "Reds")),
 #'     cex = 20,
 #'     digits = 1,
 #'     hsize = 1.5,
 #'     collapse = TRUE,
-#'     b = 3
+#'     l = 1
 #' )
 #' @return A ggplot object.
 #' @export
