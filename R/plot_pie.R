@@ -5,19 +5,20 @@
 #' @inheritParams plot_violin
 #' @inheritParams GimmeMyStats::count_category
 #' @inheritParams ggplot2::margin
-#' @param x Vector of character values visualized on the plot.
-#' @param width_text Integer for the maximum length of the text.
-#' @param colour Color or vector of colors for the categories.
+#' @inheritParams plot_bar_2cat
+#' @inheritParams plot_venn
+#' @inheritParams plot_bar
+#' @inheritParams plot_alluvial
+#' @param x Vector of character values of factor to be visualized.
 #' @param cex_label Integer for the maximum length of the title.
 #' @param hsize Double for the size of the central hole in the pie chart
 #' (in \[1, 2\]).
 #' @param legend Boolean to toggle the display of the legend or a vector of
 #' character to rename the legend.
-#' @param label Boolean to toggle the display of the label.
 #' @param sample_size Integer for the sample size of the dataset to calculate
 #' percentages (if different from the length of the variable).
-#' @param threshold Double for the minimal percentage value before being
-#'  hidden on the plot.
+#' @param threshold Double for the minimal value (percentage or raw value if percent is false)
+#' before being hidden on the plot.
 #'
 #' @examples
 #' library(magrittr)
