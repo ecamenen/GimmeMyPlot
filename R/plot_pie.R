@@ -85,26 +85,56 @@ plot_pie <- function(
     l = -1,
     r = -1,
     b = -1,
-    angle = 0) {
+    angle = 0,
+    format = TRUE) {
+   if (!is.character(legend)) {
+       legend2 <- unique(x) %>% sort()
+   } else {
+       legend2 <- legend
+   }
+    if (isTRUE(sort)) {
+        sort <- unique(x) %>% sort()
+        x <- factor(x) %>%
+            sort(na.last = TRUE)
+    } else if (isFALSE(sort)) {
+        sort <- unique(x) %>% na.omit()
+        x <- factor(x)
+    } else {
+        x <- x %>%
+            factor(levels = sort) %>%
+            sort(na.last = TRUE)
+    }
+        tmp <- as.character(x) %>% sort()
+        res <- as.list(legend2) %>%
+            set_names(c(unique(tmp), tail(legend2, -length(unique(tmp)))))
+        x <- fct_expand(x, names(res))
+        res2 <- set_names(names(res), as.character(res))
+        x <- do.call(fct_recode, c(list(.f = x), res2))
     df <- count_category(
         x,
         width = width_text,
         collapse = collapse,
-        sort = sort
+        sort = FALSE,
+        format = format
     )
     if (!is.null(sample_size)) {
         n0 <- c(sample_size - sum(df$n))
         if (!any(is.na(df$f))) {
             df <- rbind(df, data.frame(f = NA, n = n0))
         } else {
-            df[which(is.na(df$f)), "n"] <- df$n + n0
+            df[which(is.na(df$f)), "n"] <- df[which(is.na(df$f)), "n"] + n0
         }
     }
-    if (!is.null(legend) && !is.logical(legend)) {
-        df$f <- factor(df$f, levels = legend)
-        df <- complete(df, f = levels(f), fill = list(n = 0)) %>%
-            mutate(f = factor(f, levels = legend)) %>%
-            arrange(f)
+    if (isFALSE(collapse) && !is.null(legend) && !is.logical(legend)) {
+        legend2 <- str_wrap(legend2, width_text)
+        missing <- setdiff(legend2, df$f)
+        df$f <- as.character(df$f)
+        df <- complete(df, f = c(f, missing), fill = list(n = 0))  %>%
+            mutate(f = factor(f, levels = legend2))
+        sort <- res[sort] %>%
+            unlist() %>%
+            str_wrap(width_text) %>%
+            c(missing)
     }
 
     df <- mutate(
@@ -116,6 +146,11 @@ plot_pie <- function(
         label = str_wrap(str_glue("{f}"), width_text),
         text = scales::percent(n / sum(n), digits)
     )
+    if (isFALSE(collapse)) {
+         df <- df %>%
+            mutate(f = fct_relevel(f, sort)) %>%
+            arrange(f)
+    }
     if (is.null(title)) {
         title <- deparse(substitute(x))
     }
@@ -172,7 +207,7 @@ plot_pie <- function(
         p + theme(
             axis.text = element_text(
                 size = cex_label,
-                colour = colour,
+                colour = ifelse(is.na(df$f), "white", colour),
                 vjust = .Machine$double.digits,
                 angle = angle
             ) %>% suppressWarnings()
