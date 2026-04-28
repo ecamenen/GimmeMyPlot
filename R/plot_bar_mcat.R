@@ -22,6 +22,7 @@
 #' library(RColorBrewer)
 #'
 #' # Default parameters
+#' set.seed(123)
 #' k <- 10
 #' n <- runif(k, 1, 10) %>% round()
 #' x <- paste("Level", seq(k)) %>%

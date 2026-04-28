@@ -27,6 +27,7 @@
 #' @examples
 #' library(magrittr)
 #'
+#' set.seed(123)
 #' df <- replicate(2, runif(10, 1, 100)) %>%
 #' t() %>%
 #'     as.data.frame() %>%

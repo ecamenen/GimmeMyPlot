@@ -13,6 +13,7 @@
 #'
 #' @examples
 #' # Default parameters
+#' set.seed(123)
 #' x <- rnorm(100)
 #' plot_histogram(x)
 #'

@@ -13,6 +13,7 @@
 #' library(magrittr)
 #'
 #' # Default parameters
+#' set.seed(123)
 #' x <- runif(10, 1, 10) %>%
 #'     set_names(paste("Sample", LETTERS[seq(10)]))
 #' plot_bar(x)

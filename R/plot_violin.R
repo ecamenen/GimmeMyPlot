@@ -41,6 +41,7 @@
 #' library(RColorBrewer)
 #'
 #' # Default parameters
+#' set.seed(123)
 #' x <- runif(10)
 #' plot_violin(x)
 #'

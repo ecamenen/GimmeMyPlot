@@ -24,6 +24,7 @@
 #' library(magrittr)
 #' library(RColorBrewer)
 #'
+#' set.seed(123)
 #' x <- lapply(
 #'     seq(3),
 #'     function(x) {
