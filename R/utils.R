@@ -137,16 +137,15 @@ margin_spacer <- function(x, ratio = 5) {
 #'
 #' @export
 to_title <- function(x) {
-    lapply(
-        x,
-        function(i) {
-            if (!is.na(i) && !is.null(i)) {
-                paste0(toupper(substr(i, 1, 1)), substr(i, 2, nchar(i)))
-            } else {
-                i
-            }
+    x <- iconv(as.character(x), from = "", to = "UTF-8", sub = "byte")
+
+    lapply(x, function(i) {
+        if (!is.na(i) && nzchar(i)) {
+            sub("^(\\w)", "\\U\\1", i, perl = TRUE)
+        } else {
+            i
         }
-    ) %>% unlist()
+    }) %>% unlist()
 }
 
 #' Truncate to a maximum width
