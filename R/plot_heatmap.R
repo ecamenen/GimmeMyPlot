@@ -1,14 +1,31 @@
+# library(tidyverse)
+# library(magrittr)
+# set.seed(123)
+# Numerical variables
 # df <- replicate(5, runif(10, 1, 100)) %>%
 #     t() %>%
 #     as.data.frame() %>%
 #     set_rownames(paste("Sample", LETTERS[1:5])) %>%
 #     set_colnames(paste("Variable", letters[1:10]))
+# plot_heatmap(df)
+# Categorial variables
 # df <- replicate(5, sample(c("Yes", "No"), 10, replace = TRUE)) %>%
 #     t() %>%
 #     as.data.frame() %>%
 #     set_rownames(paste("Sample", LETTERS[1:5])) %>%
 #     set_colnames(paste("Variable", letters[1:10])) %>%
 #     mutate(across(everything(), as.factor))
+# plot_heatmap(df)
+# Mixed categorical variables
+# df <- cbind(
+#     replicate(3, sample(c("Yes", "No"), 5, replace = TRUE)),
+#     replicate(2, sample(c("Level A", "Level B", "Level C"), 5, replace = TRUE))
+# ) %>%
+#     as.data.frame() %>%
+#     set_rownames(paste("Sample", LETTERS[1:5])) %>%
+#     set_colnames(paste("Variable", letters[1:5])) %>%
+#     mutate(across(everything(), as.factor))
+# plot_heatmap(df)
 #' @export
 plot_heatmap <- function(
         x,
@@ -19,11 +36,14 @@ plot_heatmap <- function(
         sort = TRUE
 ) {
     if (is.null(colour)) {
-        colour <- brewer.pal(11, "RdBu") %>% rev()
+        if (!pull(x, 1) %>% is.numeric()) {
+            colour <- palette_discrete()[c(1, 3, 2, 4:13)]
+        } else {
+            colour <- brewer.pal(11, "RdBu") %>% rev()
+        }
     }
     if (!pull(x, 1) %>% is.numeric()) {
         x <- x %>% mutate(across(everything(), as.factor))
-        colour <- palette_discrete()
     } else {
         if (!isFALSE(normalize)) {
             if (normalize == TRUE || normalize == "zscore") {
@@ -45,16 +65,28 @@ plot_heatmap <- function(
     x <- x %>% set_colnames(colnames(.) %>% str_wrap(width_text))
     if (isTRUE(sort)) {
         col_names <- sort(colnames(x))
-    } else {
+    } else if (isFALSE(sort)) {
         col_names <- colnames(x)
+    } else {
+        custom_levels <- str_wrap(sort, width_text)
+        col_names <- custom_levels[custom_levels %in% colnames(x)]
+        col_names <- c(col_names, setdiff(colnames(x), col_names))
     }
     p <- x %>%
         as.data.frame() %>%
+        mutate(across(where(is.factor), as.character)) %>%
         mutate(id = rownames(.)) %>%
         gather("key", "value", -id) %>%
         mutate(
             key = factor(key, levels = col_names),
-            id = str_wrap(id, width_text)
+            id = str_wrap(id, width_text),
+            value = if (!pull(x, 1) %>% is.numeric() && !isTRUE(sort) && !isFALSE(sort)) {
+                factor(value, levels = sort)
+            } else if (!pull(x, 1) %>% is.numeric()) {
+                factor(value, levels = unique(value))
+            } else {
+                as.numeric(value)
+            }
         ) %>%
         ggplot(aes(id, key, fill = value)) +
         geom_tile() +
