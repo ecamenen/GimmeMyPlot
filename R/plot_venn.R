@@ -1,15 +1,13 @@
 #' Venn diagram
 #'
-#' Visualize a venn diagram with the element of in each set and their
-#' intersection.
-#'
 #' @inheritParams plot_violin
 #' @inheritParams plot_pie
 #' @inheritParams plot_bar_mcat
-#' @param x List (with names).
-#' @param width_label Integer for the maximum length of the labels.
-#' @param color_gradient Vector of colors for the gradient of number of
-#' elements. If FALSE, hide the color.
+#' @param x A named list where each element represents a set of items (character vectors).
+#' @param width_label Integer for the maximum length of the labels before wrapping.
+#' @param color_gradient Vector of colors for the fill gradient based on the number
+#'   of elements in each region. If `FALSE`, the regions remain uncolored.
+#' @param cex_line Double for the  magnification width for the set boundaries.
 #' @param n_max Integer for the maximum number of element to show.
 #' After this threshold, only their statistics will be visible.
 #' @param vjust_label Double for the vertical justification of the labels
@@ -17,7 +15,7 @@
 #' @param label Boolean to toggle the display of the labels.
 #' @param element Boolean to toggle the display of the elements.
 #' If disabled, only their statistics will be visible.
-#' @param percent Boolean to toggle the display of the percenatge of the
+#' @param percent Boolean to toggle the display of the percentage of the
 #' elements.
 #'
 #' @examples
@@ -155,7 +153,7 @@ plot_venn <- function(
             aes(label = to_title(label)),
             data = region_sf,
             alpha = 0.5,
-            label.size = 0,
+            linewidth = 0,
             fill = NA,
             size = cex * 4
         ) +
