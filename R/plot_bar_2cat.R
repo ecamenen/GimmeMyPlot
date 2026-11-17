@@ -6,8 +6,31 @@
 #' @inherit GimmeMyStats::post_hoc_chi2
 #' @inherit plot_violin
 #' @inherit plot_bar_mcat
-#' @param width_text Integer for the maximum length of the text.
-#' @param width_legend Integer for the maximum length of the legend.
+#' @param width_text Integer for the maximum length of the text before wrapping.
+#' @param width_legend Integer for the maximum length of the legend before wrapping.
+#' @param width_legend_text Integer for the maximum length of the legend
+#'   labels before wrapping.
+#' @param colour Vector of colors used to fill the categories of the first
+#'   variable.
+#' @param sort Boolean or character vector specifying the order of the
+#'   categories of the second variable. If `TRUE`, categories are sorted
+#'   alphabetically. If `FALSE`, their original order is preserved.
+#'   Alternatively, a character vector can be supplied to specify
+#'   a custom order.
+#' @param threshold_pct Double value specifying the minimum percentage
+#'   required to display the percentage alongside the count.
+#'   Percentages less than or equal to this threshold are hidden,
+#'   while the corresponding count remains visible.
+#' @param stats Boolean to toggle the display of statistical results.
+#'   If enabled, statistical tests are performed using `post_hoc_chi2()`
+#'   and significant comparisons are displayed on the plot.
+#' @param legend Character vector specifying the order of the categories
+#'   of the first variable in the legend. If `NULL`, the default factor
+#'   order is used.
+#' @param pct Boolean to toggle the display of percentages alongside
+#'   counts inside the bars. If `FALSE`, only counts are displayed.
+#' @param digits Integer specifying the number of decimal places used
+#'   to format percentages.
 #'
 #' @examples
 #' library(magrittr)
