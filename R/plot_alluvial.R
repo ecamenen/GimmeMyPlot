@@ -12,7 +12,7 @@
 #' @param x Data.frame containing multiple categorical variables (factors or
 #'          character vectors). Each column represents a categorical variable,
 #'          and each row represents an observation.
-#' @param colour Color or vector of colors for the different categories.
+#' @param colour Color or vector of colors for the categories.
 #' @param sort Boolean indicating whether to sort the strata (bars) within each
 #'             column alphabetically by category name. If \code{FALSE} (default),
 #'             strata are displayed in the order they appear in the data

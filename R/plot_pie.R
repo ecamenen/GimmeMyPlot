@@ -10,7 +10,7 @@
 #' @inheritParams plot_bar
 #' @inheritParams plot_alluvial
 #' @param x Vector of character values of factor to be visualized.
-#' @param cex_label Integer for the maximum length of the title.
+#' @param cex_label Integer for the maximum length of the title before wrapping.
 #' @param hsize Double for the size of the central hole in the pie chart
 #' (in \[1, 2\]).
 #' @param legend Boolean to toggle the display of the legend or a vector of
@@ -91,6 +91,7 @@ plot_pie <- function(
     b = -1,
     angle = 0,
     format = TRUE) {
+    x <- as.character(x)
    if (!is.character(legend)) {
        legend2 <- unique(x) %>% sort()
    } else {

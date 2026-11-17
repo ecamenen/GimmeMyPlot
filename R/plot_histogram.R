@@ -1,6 +1,6 @@
 #' Plot histogram
 #'
-#' Visualize the distribution of single variable using histogram
+#' Visualize the distribution of single variable using histogram.
 #'
 #' @inheritParams plot_violin
 #' @param x Vector of numerical values visualized on the plot.

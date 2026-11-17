@@ -20,8 +20,8 @@
 #' @param alpha Double for the transparency of the polygons.
 #' @param legend_position Character for the position of the legend among
 #' 'bottomright', 'bottom', 'bottomleft', 'left', 'topleft', 'top', 'topright',
-#' 'right' and 'center'
-#' @param width_text Integer for the maximum length of the labels.
+#' 'right' and 'center'.
+#' @param width_text Integer for the maximum length of the labels before wrapping.
 #' @param ... Additional parameters for [graphics::legend ()].
 #'
 #' @examples
@@ -50,7 +50,7 @@
 #'     y = -0.7
 #' )
 #'
-#' @return NULL (launch a basic plot)
+#' @return NULL (launch a basic plot).
 #' @export
 plot_radar <- function(
     x,
