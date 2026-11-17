@@ -1,13 +1,34 @@
 #' Barplot
 #'
-#' Display each numerical value separately using a barplot
+#' Display each numerical value separately using a barplot.
 #'
 #' @inheritParams plot_violin
 #' @inheritParams plot_bar_mcat
 #' @param x Vector of numerical values visualized on the plot.
-#' @param colour Color or vector of colors for the gradient of the bars.
-#' @param threshold Double for the minimal percentage value before being
-#'  hidden on the plot.
+#' @param colour Color or vector of colors used to generate the gradient
+#'   of the bars.
+#' @param threshold Double for the minimum absolute value below which
+#'   the numerical labels are hidden on the plot.
+#' @param sample_size Integer for the sample size used to calculate
+#'   the percentage labels. If `NULL`, the length of `x` is used.
+#' @param label_x Character specifying the type of labels displayed
+#'   inside the bars. Possible values are `"percent"`, `"value"` or `"none"`.
+#' @param label_y Character specifying the type of labels displayed
+#'   outside the bars. Possible values are `"percent"`, `"value"` or `"none"`.
+#' @param sort Character specifying the sorting order of the values.
+#'   Possible values are `"asc"` and `"desc"`.
+#' @param error Double vector specifying the error margins displayed
+#'   around each value.
+#' @param abs Boolean to toggle the use of absolute values for sorting.
+#'   The original values are preserved in the plot.
+#' @param geom Character specifying the geometry used to display the values.
+#'   Possible values are `"bar"` and `"point"`.
+#' @param nudge_x Double specifying the horizontal adjustment of the labels
+#'   displayed outside the bars.
+#' @param hjust_title Double for the horizontal justification of the title
+#'   (in \[0, 1\]).
+#' @param hjust_ratio Double controlling the horizontal justification
+#'   of the labels displayed outside the bars.
 #'
 #' @examples
 #' library(magrittr)
